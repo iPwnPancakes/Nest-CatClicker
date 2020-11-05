@@ -27,4 +27,9 @@ export class CatController {
   deleteCat(@Param('id', ParseIntPipe) id: number) {
     return this.catService.deleteCat(id);
   }
+
+  @Get(':id/increment')
+  incrementCat(@Param('id', ParseIntPipe) id: number) {
+    return this.catService.incrementCat(id);
+  }
 }

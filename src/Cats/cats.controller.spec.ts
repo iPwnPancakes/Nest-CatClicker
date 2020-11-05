@@ -115,4 +115,30 @@ describe('CatController', () => {
       }).toThrowError(NotFoundException);
     });
   });
+
+  describe('incrementCat', () => {
+    it('increments a cat that exists', () => {
+      const cat: Cat = { id: 1, name: 'TEST CAT', clicks: 100 };
+
+      jest
+        .spyOn(catService, 'incrementCat')
+        .mockImplementation((): Cat => ({ ...cat, clicks: cat.clicks + 1 }));
+
+      const response = catController.incrementCat(1);
+
+      expect(response.clicks).toEqual(101);
+    });
+
+    it('throws NotFoundException when no cat exists with id', () => {
+      const id = 404;
+
+      jest.spyOn(catService, 'incrementCat').mockImplementation(() => {
+        throw new NotFoundException('Cat not found');
+      });
+
+      expect(() => {
+        catController.incrementCat(id);
+      }).toThrowError(NotFoundException);
+    });
+  });
 });

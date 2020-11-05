@@ -5,10 +5,6 @@ import Cat from './interfaces/cat.interface';
 
 describe('CatService', () => {
   let catService: CatsService;
-  const defaultCatArray: Array<Cat> = [
-    { id: 1, name: 'Pepperoni', clicks: 0 },
-    { id: 2, name: 'Rigatoni', clicks: 0 },
-  ];
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -17,12 +13,18 @@ describe('CatService', () => {
 
     catService = moduleRef.get<CatsService>(CatsService);
 
-    catService.cats = defaultCatArray;
+    catService.cats = [
+      { id: 1, name: 'Pepperoni', clicks: 0 },
+      { id: 2, name: 'Rigatoni', clicks: 1 },
+    ];
   });
 
   describe('getAll', () => {
     it('return an array of cats', () => {
-      expect(catService.getAll()).toEqual(defaultCatArray);
+      expect(catService.getAll()).toEqual([
+        { id: 1, name: 'Pepperoni', clicks: 0 },
+        { id: 2, name: 'Rigatoni', clicks: 1 },
+      ]);
     });
   });
 
@@ -61,6 +63,30 @@ describe('CatService', () => {
           catService.deleteCat(id);
         }).toThrowError(NotFoundException);
       });
+    });
+  });
+
+  describe('incrementCat', () => {
+    it('increments the clicks on a cat', () => {
+      const id = 2;
+
+      catService.incrementCat(id);
+      catService.incrementCat(id);
+      catService.incrementCat(id);
+
+      const cat = catService.cats.find(
+        (currentCat: Cat) => currentCat.id === id,
+      );
+
+      expect(cat.clicks).toEqual(4);
+    });
+
+    it('throws NotFoundException when no cat exists with id', () => {
+      const id = 404;
+
+      expect(() => {
+        catService.incrementCat(id);
+      }).toThrowError(NotFoundException);
     });
   });
 });
