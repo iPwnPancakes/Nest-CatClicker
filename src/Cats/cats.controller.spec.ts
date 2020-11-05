@@ -18,16 +18,16 @@ describe('CatController', () => {
     catController = moduleRef.get<CatController>(CatController);
 
     catService.cats = [
-      { id: 1, name: 'Pepperoni' },
-      { id: 2, name: 'Rigatoni' },
+      { id: 1, name: 'Pepperoni', clicks: 0 },
+      { id: 2, name: 'Rigatoni', clicks: 0 },
     ];
   });
 
   describe('getAllCats', () => {
     it('should return an array of cats', async () => {
       const result: Array<Cat> = [
-        { id: 1, name: 'Pepperoni' },
-        { id: 2, name: 'Rigatoni' },
+        { id: 1, name: 'Pepperoni', clicks: 0 },
+        { id: 2, name: 'Rigatoni', clicks: 0 },
       ];
 
       jest.spyOn(catService, 'getAll').mockImplementation(() => result);
@@ -38,7 +38,7 @@ describe('CatController', () => {
 
   describe('addCat', () => {
     it('should create a new cat', async () => {
-      const newCat: Cat = { id: 3, name: 'Testeroni' };
+      const newCat: Cat = { id: 3, name: 'Testeroni', clicks: 0 };
 
       jest.spyOn(catService, 'addCat').mockImplementation((cat: Cat) => {
         catService.cats.push(cat);
@@ -52,7 +52,7 @@ describe('CatController', () => {
 
   describe('updateCat', () => {
     it('updates a cat that exists', async () => {
-      const newCat: Cat = { id: 2, name: 'Testeroni' };
+      const newCat: Cat = { id: 2, name: 'Testeroni', clicks: 0 };
 
       jest.spyOn(catService, 'updateCat').mockImplementation((cat: Cat) => {
         const index = catService.cats.findIndex(
@@ -72,7 +72,7 @@ describe('CatController', () => {
     });
 
     it('throws NotFoundException when no cat exists with id', async () => {
-      const newCat: Cat = { id: 404, name: 'Testeroni' };
+      const newCat: Cat = { id: 404, name: 'Testeroni', clicks: 0 };
 
       jest.spyOn(catService, 'updateCat').mockImplementation(() => {
         throw new NotFoundException('Cat not found');

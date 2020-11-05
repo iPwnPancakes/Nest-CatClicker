@@ -6,8 +6,8 @@ import Cat from './interfaces/cat.interface';
 describe('CatService', () => {
   let catService: CatsService;
   const defaultCatArray: Array<Cat> = [
-    { id: 1, name: 'Pepperoni' },
-    { id: 2, name: 'Rigatoni' },
+    { id: 1, name: 'Pepperoni', clicks: 0 },
+    { id: 2, name: 'Rigatoni', clicks: 0 },
   ];
 
   beforeEach(async () => {
@@ -28,7 +28,7 @@ describe('CatService', () => {
 
   describe('updateCat', () => {
     it('updates a cat that exists', async () => {
-      const newCat: Cat = { id: 2, name: 'Testeroni' };
+      const newCat: Cat = { id: 2, name: 'Testeroni', clicks: 0 };
 
       catService.updateCat(newCat);
 
@@ -36,7 +36,7 @@ describe('CatService', () => {
     });
 
     it('throws NotFoundException when no cat exists with id', () => {
-      const newCat: Cat = { id: 404, name: 'THIS CAT DOESNT EXIST' };
+      const newCat: Cat = { id: 404, name: 'THIS CAT DOESNT EXIST', clicks: 0 };
 
       expect(() => {
         catService.updateCat(newCat);

@@ -6,8 +6,8 @@ import Cat from './interfaces/cat.interface';
 @Injectable()
 export class CatsService {
   cats: Array<Cat> = [
-    { id: 1, name: 'TEST' },
-    { id: 3, name: 'aaaa' }
+    { id: 1, name: 'TEST', clicks: 0 },
+    { id: 3, name: 'aaaa', clicks: 0 }
   ];
 
   getAll(): Array<Cat> {
@@ -17,7 +17,7 @@ export class CatsService {
   addCat(cat: CreateCatDto) {
     const last_id = this.cats.length > 0 ? this.cats[this.cats.length - 1].id : 0;
 
-    this.cats.push({ id: last_id + 1, ...cat });
+    this.cats.push({ id: last_id + 1, clicks: 0, ...cat });
   }
 
   updateCat(cat: UpdateCatDto): Cat {
