@@ -1,9 +1,14 @@
-import { IsInt, IsNotEmpty } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UpdateCatDto {
-    @IsInt()
-    id: number;
-
     @IsNotEmpty()
-    name: string;
+    id: string;
+
+    @IsString()
+    @IsOptional()
+    name?: string;
+
+    @IsInt()
+    @IsOptional()
+    clicks?: number;
 }

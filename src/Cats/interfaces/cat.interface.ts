@@ -1,5 +1,6 @@
-export default interface Cat {
-    id: number;
+export interface ICat {
+    id: string;
     name: string;
     clicks: number;
+    parents: [ICat?, ICat?];
 }

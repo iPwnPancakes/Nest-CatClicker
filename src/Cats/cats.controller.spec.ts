@@ -2,7 +2,10 @@ import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { CatController } from './cats.controller';
 import { CatsService } from './cats.service';
-import Cat from './interfaces/cat.interface';
+import { CreateCatDto } from './dto/create-cat.dto';
+import { UpdateCatDto } from './dto/update-cat.dto';
+import { ICat } from './interfaces/cat.interface';
+import { CatRepository } from './repositories/cats.repository';
 
 describe('CatController', () => {
   let catController: CatController;
@@ -17,62 +20,59 @@ describe('CatController', () => {
     catService = moduleRef.get<CatsService>(CatsService);
     catController = moduleRef.get<CatController>(CatController);
 
-    catService.cats = [
-      { id: 1, name: 'Pepperoni', clicks: 0 },
-      { id: 2, name: 'Rigatoni', clicks: 0 },
-    ];
+    const repo = new CatRepository([
+      { id: '1', name: 'Pepperoni', clicks: 0, parents: [] },
+      { id: '2', name: 'Rigatoni', clicks: 0, parents: [] }
+    ]);
+
+    catService.cats = repo;
   });
 
   describe('getAllCats', () => {
-    it('should return an array of cats', async () => {
-      const result: Array<Cat> = [
-        { id: 1, name: 'Pepperoni', clicks: 0 },
-        { id: 2, name: 'Rigatoni', clicks: 0 },
-      ];
+    it('should return an array of cats', () => {
+      jest.spyOn(catService, 'getAll').mockImplementation(() => catService.cats.getAll());
 
-      jest.spyOn(catService, 'getAll').mockImplementation(() => result);
-
-      expect(await catController.getAllCats()).toBe(result);
+      expect(catController.getAllCats()).toStrictEqual(catService.cats.getAll());
     });
   });
 
   describe('addCat', () => {
-    it('should create a new cat', async () => {
-      const newCat: Cat = { id: 3, name: 'Testeroni', clicks: 0 };
+    it('should create a new cat', () => {
+      const { name, clicks }: CreateCatDto = { name: 'Testeroni', clicks: 0 };
 
-      jest.spyOn(catService, 'addCat').mockImplementation((cat: Cat) => {
-        catService.cats.push(cat);
+      jest.spyOn(catService, 'addCat').mockImplementation((): ICat => {
+        const newCat: ICat = { id: '3', parents: [], name, clicks };
+        catService.cats.respository.push(newCat);
+        return newCat;
       });
 
-      await catController.addCat(newCat);
+      catController.addCat({ name, clicks });
 
-      expect(catService.cats).toContainEqual(newCat);
+      expect(catService.cats.respository).toContainEqual({ id: '3', parents: [], name, clicks });
     });
   });
 
   describe('updateCat', () => {
-    it('updates a cat that exists', async () => {
-      const newCat: Cat = { id: 2, name: 'Testeroni', clicks: 0 };
+    it('updates a cat that exists', () => {
+      const newCat: ICat = { id: '2', name: 'Testeroni', clicks: 0, parents: [] };
 
-      jest.spyOn(catService, 'updateCat').mockImplementation((cat: Cat) => {
-        const index = catService.cats.findIndex(
-          currentCat => currentCat.id === cat.id,
-        );
+      jest.spyOn(catService, 'updateCat').mockImplementation((cat: UpdateCatDto) => {
+        const foundCat = catService.cats.find(cat.id);
 
-        const updatedCat = { ...catService.cats[index], ...newCat };
+        const updatedCat = { ...foundCat, ...newCat };
 
-        catService.cats.splice(index, 1, updatedCat);
+        catService.cats.save(updatedCat);
 
         return updatedCat;
       });
 
-      await catController.updateCat(newCat);
+      catController.updateCat({ id: newCat.id, name: newCat.name, clicks: newCat.clicks });
 
-      expect(catService.cats).toContainEqual(newCat);
+      expect(catService.cats.respository).toContainEqual(newCat);
     });
 
-    it('throws NotFoundException when no cat exists with id', async () => {
-      const newCat: Cat = { id: 404, name: 'Testeroni', clicks: 0 };
+    it('throws NotFoundException when no cat exists with id', () => {
+      const newCat: UpdateCatDto = { id: '404', name: 'Testeroni', clicks: 0 };
 
       jest.spyOn(catService, 'updateCat').mockImplementation(() => {
         throw new NotFoundException('Cat not found');
@@ -85,26 +85,20 @@ describe('CatController', () => {
   });
 
   describe('deleteCat', () => {
-    it('deletes a cat that exists', async () => {
-      const id = 2;
+    it('deletes a cat that exists', () => {
+      const id = '2';
 
-      jest.spyOn(catService, 'deleteCat').mockImplementation((id: number) => {
-        const index = catService.cats.findIndex(
-          (currentCat: Cat) => currentCat.id === id,
-        );
-
-        catService.cats.splice(index, 1);
+      jest.spyOn(catService, 'deleteCat').mockImplementation((id: string) => {
+        catService.cats.delete(id);
       });
 
       catController.deleteCat(id);
 
-      expect(
-        catService.cats.find((currentCat: Cat) => currentCat.id === id),
-      ).toBeUndefined();
+      expect(catService.cats.getAll().find((currentCat: ICat) => currentCat.id === id)).toBeUndefined();
     });
 
-    it('throws NotFoundException when no cat exists with id', async () => {
-      const id = 2;
+    it('throws NotFoundException when no cat exists with id', () => {
+      const id = '2';
 
       jest.spyOn(catService, 'deleteCat').mockImplementation(() => {
         throw new NotFoundException('Cat not found');
@@ -118,19 +112,19 @@ describe('CatController', () => {
 
   describe('incrementCat', () => {
     it('increments a cat that exists', () => {
-      const cat: Cat = { id: 1, name: 'TEST CAT', clicks: 100 };
+      const cat: ICat = { id: '1', name: 'TEST CAT', clicks: 100, parents: [] };
 
       jest
         .spyOn(catService, 'incrementCat')
-        .mockImplementation((): Cat => ({ ...cat, clicks: cat.clicks + 1 }));
+        .mockImplementation((): ICat => ({ ...cat, clicks: cat.clicks + 1 }));
 
-      const response = catController.incrementCat(1);
+      const response = catController.incrementCat(cat.id);
 
       expect(response.clicks).toEqual(101);
     });
 
     it('throws NotFoundException when no cat exists with id', () => {
-      const id = 404;
+      const id = '404';
 
       jest.spyOn(catService, 'incrementCat').mockImplementation(() => {
         throw new NotFoundException('Cat not found');

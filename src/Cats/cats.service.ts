@@ -1,59 +1,63 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { BreedCatDto } from './dto/breed-cat.dto';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
-import Cat from './interfaces/cat.interface';
+import { ICat } from './interfaces/cat.interface';
+import { Cat } from './models/Cat';
+import { CatRepository } from './repositories/cats.repository';
 
 @Injectable()
 export class CatsService {
-  cats: Array<Cat> = [
-    { id: 1, name: 'TEST', clicks: 0 },
-    { id: 3, name: 'aaaa', clicks: 0 },
-  ];
+  cats = new CatRepository();
 
-  getAll(): Array<Cat> {
-    return this.cats;
+  constructor() {
+    this.cats.create({ name: 'Mia', clicks: 0 });
+    this.cats.create({ name: 'Flapjack', clicks: 0 });
   }
 
-  addCat(cat: CreateCatDto) {
-    const last_id =
-      this.cats.length > 0 ? this.cats[this.cats.length - 1].id : 0;
-
-    this.cats.push({ id: last_id + 1, clicks: 0, ...cat });
+  getAll(): ICat[] {
+    return this.cats.getAll();
   }
 
-  updateCat(cat: UpdateCatDto): Cat {
-    const cat_index = this.cats.findIndex(_cat => _cat.id === cat.id);
+  addCat(cat: CreateCatDto): ICat {
+    return this.cats.create(cat);
+  }
 
-    if (cat_index === -1) throw new NotFoundException('Cat not found');
+  updateCat(cat: UpdateCatDto): ICat {
+    const foundCat = this.cats.find(cat.id);
 
-    const updated_cat: Cat = Object.assign({}, this.cats[cat_index], cat);
+    if(!foundCat) {
+      throw new NotFoundException('Cat not found');
+    }
 
-    this.cats.splice(cat_index, 1, updated_cat);
+    const updated_cat: ICat = new Cat({ ...foundCat, ...cat });
+
+    this.cats.save(updated_cat);
 
     return updated_cat;
   }
 
-  deleteCat(id: number) {
-    const cat_index = this.cats.findIndex(_cat => _cat.id === id);
-
-    if (cat_index === -1) throw new NotFoundException('Cat not found');
-
-    this.cats = this.cats.filter((currentCat: Cat) => currentCat.id !== id);
+  deleteCat(id: string): void {
+    this.cats.delete(id);
   }
 
-  incrementCat(id: number) {
-    const cat_index = this.cats.findIndex(
-      (currentCat: Cat) => currentCat.id === id,
-    );
+  incrementCat(id: string) {
+    const foundCat = this.cats.find(id);
+    
+    if(!foundCat) {
+      throw new NotFoundException('Cat not found');
+    }
 
-    if (cat_index === -1) throw new NotFoundException('Cat not found');
-
-    const updatedCat: Cat = Object.assign({}, this.cats[cat_index], {
-      clicks: this.cats[cat_index].clicks + 1,
+    const updatedCat: ICat = Object.assign({}, foundCat, {
+      clicks: foundCat.clicks + 1,
     });
 
-    this.cats.splice(cat_index, 1, updatedCat);
+    this.cats.save(updatedCat);
 
     return updatedCat;
+  }
+
+  breedCat({ momCatId, dadCatId, name }: BreedCatDto): ICat {
+    return this.cats.create({ name, momCatId, dadCatId });
   }
 }
