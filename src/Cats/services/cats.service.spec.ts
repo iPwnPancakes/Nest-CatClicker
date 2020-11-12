@@ -1,8 +1,8 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { CatsService } from './cats.service';
-import { UpdateCatDto } from './dto/update-cat.dto';
-import { CatRepository } from './repositories/cats.repository';
+import { UpdateCatDto } from '../dto/update-cat.dto';
+import { CatRepository } from '../repositories/cats.repository';
 
 describe('CatService', () => {
   let catService: CatsService;
