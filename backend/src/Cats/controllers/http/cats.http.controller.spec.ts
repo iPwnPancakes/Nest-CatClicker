@@ -1,11 +1,11 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { CatController } from './cats.controller';
-import { CatsService } from '../services/cats.service';
-import { CreateCatDto } from '../dto/create-cat.dto';
-import { UpdateCatDto } from '../dto/update-cat.dto';
-import { ICat } from '../interfaces/cat.interface';
-import { CatRepository } from '../repositories/cats.repository';
+import { CatController } from './cats.http.controller';
+import { CatsService } from '../../services/cats.service';
+import { CreateCatDto } from '../../dto/create-cat.dto';
+import { UpdateCatDto } from '../../dto/update-cat.dto';
+import { ICat } from '../../interfaces/cat.interface';
+import { CatRepository } from '../../repositories/cats.repository';
 
 describe('CatController', () => {
   let catController: CatController;

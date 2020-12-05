@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
-import { CatsService } from '../services/cats.service';
-import { BreedCatDto } from '../dto/breed-cat.dto';
-import { CreateCatDto } from '../dto/create-cat.dto';
-import { UpdateCatDto } from '../dto/update-cat.dto';
-import { ICat } from '../interfaces/cat.interface';
+import { CatsService } from '../../services/cats.service';
+import { BreedCatDto } from '../../dto/breed-cat.dto';
+import { CreateCatDto } from '../../dto/create-cat.dto';
+import { UpdateCatDto } from '../../dto/update-cat.dto';
+import { ICat } from '../../interfaces/cat.interface';
 
 @Controller('cats')
 export class CatController {
