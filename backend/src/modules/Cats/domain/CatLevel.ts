@@ -1,11 +1,11 @@
+import { Guard } from '../../../shared/core/Guard';
 import { Result } from '../../../shared/core/Result';
 import { Entity } from '../../../shared/domain/Entity';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { CatLevelId } from './CatLevelId';
-import { ClickRate } from './ClickRate';
 
 interface CatLevelProps {
-    click_rate: ClickRate;
+    click_rate: number;
 }
 
 export class CatLevel extends Entity<CatLevelProps> {
@@ -13,7 +13,7 @@ export class CatLevel extends Entity<CatLevelProps> {
         return CatLevelId.create(this._id).getValue();
     }
 
-    get clickRate(): ClickRate {
+    get clickRate(): number {
         return this.props.click_rate;
     }
 
@@ -21,6 +21,12 @@ export class CatLevel extends Entity<CatLevelProps> {
         props: CatLevelProps,
         id?: UniqueEntityId,
     ): Result<CatLevel> {
+        const guardResult = Guard.greaterThan(0, props.click_rate);
+
+        if (!guardResult.succeeded) {
+            return Result.fail<CatLevel>(guardResult.message);
+        }
+
         return Result.ok<CatLevel>(new CatLevel(props, id));
     }
 

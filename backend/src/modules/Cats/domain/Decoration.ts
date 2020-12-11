@@ -1,33 +1,30 @@
-import { v4 as uuid } from 'uuid';
+import { Result } from '../../../shared/core/Result';
+import { Entity } from '../../../shared/domain/Entity';
+import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
+import { DecorationId } from './DecorationId';
 
 export enum DecorationEffectEnum {
     INCREASE_PRODUCTIVITY_X1_5,
-    INCREASE_PRODUCTIVITY_X2
+    INCREASE_PRODUCTIVITY_X2,
 }
 
 interface DecorationProps {
     effects: DecorationEffectEnum[];
 }
 
-export class Decoration<ID> {
-    private _id: ID;
-
-    public readonly props: DecorationProps;
-
-    constructor(props: DecorationProps, _id: ID) {
-        this._id = _id;
-        this.props = props;
+export class Decoration extends Entity<DecorationProps> {
+    get decorationId(): DecorationId {
+        return DecorationId.create(this._id).getValue();
     }
 
-    get decorationId() {
-        if(!this._id) {
-            this._id = uuid();
-        }
-
-        return this._id;
-    }
-
-    get effects() {
+    get effects(): DecorationEffectEnum[] {
         return this.props.effects;
+    }
+
+    public static create(
+        props: DecorationProps,
+        id?: UniqueEntityId,
+    ): Result<Decoration> {
+        return Result.ok<Decoration>(new Decoration(props, id));
     }
 }
