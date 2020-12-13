@@ -13,6 +13,10 @@ export class Room extends Entity<RoomProps> {
         return RoomId.create(this._id).getValue();
     }
 
+    private constructor(props: RoomProps, id?: UniqueEntityId) {
+        super(props, id);
+    }
+
     public static create(props: RoomProps, id?: UniqueEntityId): Result<Room> {
         return Result.ok<Room>(new Room(props, id));
     }

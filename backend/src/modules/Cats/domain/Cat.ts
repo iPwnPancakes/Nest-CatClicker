@@ -23,6 +23,10 @@ export class Cat extends AggregateRoot<CatProps> {
         return this.props.currentCatLevel;
     }
 
+    private constructor(props: CatProps, id?: UniqueEntityId) {
+        super(props, id);
+    }
+
     public static create(props: CatProps, id?: UniqueEntityId): Result<Cat> {
         const guardResult = Guard.againstAtLeast(0, props.name);
 

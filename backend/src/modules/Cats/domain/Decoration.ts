@@ -21,6 +21,10 @@ export class Decoration extends Entity<DecorationProps> {
         return this.props.effects;
     }
 
+    private constructor(props: DecorationProps, id?: UniqueEntityId) {
+        super(props, id);
+    }
+
     public static create(
         props: DecorationProps,
         id?: UniqueEntityId,

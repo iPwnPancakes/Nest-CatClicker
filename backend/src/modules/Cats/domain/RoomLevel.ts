@@ -22,6 +22,10 @@ export class RoomLevel extends Entity<RoomLevelProps> {
         return this.props.max_decoration_amount;
     }
 
+    private constructor(props: RoomLevelProps, id?: UniqueEntityId) {
+        super(props, id);
+    }
+
     public static create(
         props: RoomLevelProps,
         id?: UniqueEntityId,
