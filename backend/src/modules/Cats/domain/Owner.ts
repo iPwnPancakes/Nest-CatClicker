@@ -1,12 +1,14 @@
 import { Result } from '../../../shared/core/Result';
 import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
+import { UserId } from '../../Users/domain/UserId';
 import { Cats } from './Cats';
 import { Decorations } from './Decorations';
 import { OwnerId } from './OwnerId';
 import { Rooms } from './Rooms';
 
 interface OwnerProps {
+    userId: UserId;
     cats: Cats;
     decorations: Decorations;
     rooms: Rooms;
@@ -26,6 +28,10 @@ export class Owner extends AggregateRoot<OwnerProps> {
 
     get ownerId(): OwnerId {
         return OwnerId.create(this._id).getValue();
+    }
+
+    get userId(): UserId {
+        return this.props.userId;
     }
 
     get cats(): Cats {
