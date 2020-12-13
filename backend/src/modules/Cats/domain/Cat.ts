@@ -1,6 +1,6 @@
 import { Guard } from '../../../shared/core/Guard';
 import { Result } from '../../../shared/core/Result';
-import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
+import { Entity } from '../../../shared/domain/Entity';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { CatId } from './CatId';
 import { CatLevel } from './CatLevel';
@@ -10,7 +10,7 @@ interface CatProps {
     currentCatLevel: CatLevel;
 }
 
-export class Cat extends AggregateRoot<CatProps> {
+export class Cat extends Entity<CatProps> {
     get catId(): CatId {
         return CatId.create(this._id).getValue();
     }
