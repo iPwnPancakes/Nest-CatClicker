@@ -1,5 +1,6 @@
 import { Guard } from '../../../shared/core/Guard';
 import { Result } from '../../../shared/core/Result';
+import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { Entity } from '../../../shared/domain/Entity';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { UserEmail } from './UserEmail';
@@ -13,7 +14,7 @@ interface UserProps {
     user_inventory_id: UserId;
 }
 
-export class User extends Entity<UserProps> {
+export class User extends AggregateRoot<UserProps> {
     get userId() {
         return UserId.create(this._id);
     }
