@@ -1,38 +1,29 @@
-import { v4 as uuid } from 'uuid';
+import { Entity } from '../../../shared/domain/Entity';
+import { CatId } from '../../Cats/domain/CatId';
+import { DecorationId } from '../../Cats/domain/DecorationId';
+import { RoomId } from '../../Cats/domain/RoomId';
+import { UserInventoryId } from './UserInventoryId';
 
-interface UserInventoryProps<ID> {
-    catIds: ID[];
-    decorationIds: ID[];
-    roomIds: ID[];
+interface UserInventoryProps {
+    catIds: CatId[];
+    decorationIds: DecorationId[];
+    roomIds: RoomId[];
 }
 
-export class UserInventory<ID> {
-    private _id: ID;
-
-    public readonly props: UserInventoryProps<ID>;
-
-    constructor(props: UserInventoryProps<ID>, _id: ID) {
-        this._id = _id;
-        this.props = props;
-    }
-
+export class UserInventory extends Entity<UserInventoryProps> {
     get userInventoryId() {
-        if (!this._id) {
-            this._id = uuid();
-        }
-
-        return this._id;
+        return UserInventoryId.create(this._id);
     }
 
-    get catIds() {
+    get catIds(): CatId[] {
         return this.props.catIds;
     }
 
-    get decorationIds() {
+    get decorationIds(): DecorationId[] {
         return this.props.decorationIds;
     }
 
-    get roomIds() {
+    get roomIds(): RoomId[] {
         return this.props.roomIds;
     }
 }
