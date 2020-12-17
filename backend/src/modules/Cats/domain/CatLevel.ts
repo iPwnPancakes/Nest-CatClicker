@@ -9,12 +9,8 @@ interface CatLevelProps {
 }
 
 export class CatLevel extends Entity<CatLevelProps> {
-    get catLevelId(): CatLevelId {
-        return CatLevelId.create(this._id).getValue();
-    }
-
-    get clickRate(): number {
-        return this.props.click_rate;
+    private constructor(props: CatLevelProps, id?: UniqueEntityId) {
+        super(props, id);
     }
 
     public static create(
@@ -29,8 +25,12 @@ export class CatLevel extends Entity<CatLevelProps> {
 
         return Result.ok<CatLevel>(new CatLevel(props, id));
     }
+    
+    get catLevelId(): CatLevelId {
+        return CatLevelId.create(this._id).getValue();
+    }
 
-    private constructor(props: CatLevelProps, id?: UniqueEntityId) {
-        super(props, id);
+    get clickRate(): number {
+        return this.props.click_rate;
     }
 }

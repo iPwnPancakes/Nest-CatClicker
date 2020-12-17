@@ -10,18 +10,6 @@ interface RoomLevelProps {
 }
 
 export class RoomLevel extends Entity<RoomLevelProps> {
-    get roomLevelId(): RoomLevelId {
-        return RoomLevelId.create(this._id).getValue();
-    }
-
-    get max_cats(): number {
-        return this.props.max_cat_amount;
-    }
-
-    get max_decorations(): number {
-        return this.props.max_decoration_amount;
-    }
-
     private constructor(props: RoomLevelProps, id?: UniqueEntityId) {
         super(props, id);
     }
@@ -40,5 +28,17 @@ export class RoomLevel extends Entity<RoomLevelProps> {
         }
 
         return Result.ok<RoomLevel>(new RoomLevel(props, id));
+    }
+
+    get roomLevelId(): RoomLevelId {
+        return RoomLevelId.create(this._id).getValue();
+    }
+
+    get max_cats(): number {
+        return this.props.max_cat_amount;
+    }
+
+    get max_decorations(): number {
+        return this.props.max_decoration_amount;
     }
 }

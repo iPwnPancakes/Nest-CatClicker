@@ -1,20 +1,14 @@
 import { Result } from '../../../shared/core/Result';
-import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { UserId } from '../../Users/domain/UserId';
-import { Cats } from './Cats';
-import { Decorations } from './Decorations';
 import { OwnerId } from './OwnerId';
-import { Rooms } from './Rooms';
+import { Entity } from '../../../shared/domain/Entity';
 
 interface OwnerProps {
     userId: UserId;
-    cats: Cats;
-    decorations: Decorations;
-    rooms: Rooms;
 }
 
-export class Owner extends AggregateRoot<OwnerProps> {
+export class Owner extends Entity<OwnerProps> {
     private constructor(props: OwnerProps, id?: UniqueEntityId) {
         super(props, id);
     }
@@ -32,17 +26,5 @@ export class Owner extends AggregateRoot<OwnerProps> {
 
     get userId(): UserId {
         return this.props.userId;
-    }
-
-    get cats(): Cats {
-        return this.props.cats;
-    }
-
-    get decorations(): Decorations {
-        return this.props.decorations;
-    }
-
-    get rooms(): Rooms {
-        return this.props.rooms;
     }
 }

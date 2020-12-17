@@ -6,7 +6,7 @@ export class Rooms extends WatchedList<Room> {
         super(initialRooms);
     }
 
-    public static create(initialRooms?: Room[]) {
+    public static create(initialRooms?: Room[]): Rooms {
         return new Rooms(initialRooms ?? []);
     }
 
