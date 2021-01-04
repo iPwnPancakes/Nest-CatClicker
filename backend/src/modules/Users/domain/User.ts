@@ -15,8 +15,8 @@ export class User extends AggregateRoot<UserProps> {
         super(props, id);
     }
 
-    public static create(props: UserProps): Result<User> {
-        return Result.ok<User>(new User(props));
+    public static create(props: UserProps, id?: UniqueEntityId): Result<User> {
+        return Result.ok<User>(new User(props, id));
     }
 
     get userId(): UserId {
