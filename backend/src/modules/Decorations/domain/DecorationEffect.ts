@@ -4,8 +4,8 @@ import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { DecorationEffectId } from './DecorationEffectId';
 
 export enum DecorationEffectEnum {
-    INCREASE_PRODUCTIVITY_X1_5,
-    INCREASE_PRODUCTIVITY_X2,
+    INCREASE_PRODUCTIVITY_X1_5 = 'increase_productivity_1.5x',
+    INCREASE_PRODUCTIVITY_X2 = 'increase_productivity_2x',
 }
 
 interface DecorationEffectProps {
