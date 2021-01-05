@@ -1,0 +1,8 @@
+{
+    "type": "sqlite",
+    "database": "./database/testing.sqlite",
+    "entities": [
+        "dist/shared/infrastructure/framework/nestjs/**/*.entity{.ts,.js}"
+    ],
+    "migrations": ["dist/database/migrations/*{.ts,.js}"]
+}

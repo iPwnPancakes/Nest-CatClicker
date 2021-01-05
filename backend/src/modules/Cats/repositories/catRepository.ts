@@ -1,6 +1,6 @@
 import { Cat } from '../domain/Cat';
 
-export interface ICatRepo {
+export interface ICatRepository {
     exists(catId: string): Promise<boolean>;
     getCatByCatId(catId: string): Promise<Cat>;
     getCatsByLevel(levelId: string): Promise<Cat[]>;

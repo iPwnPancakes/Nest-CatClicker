@@ -10,14 +10,14 @@ export class User {
     id: string;
 
     @Column({
-        type: 'string',
+        type: 'text',
         nullable: false,
         unique: true,
     })
     email: string;
 
     @Column({
-        type: 'string',
+        type: 'text',
         nullable: false,
         unique: true,
     })

@@ -1,6 +1,8 @@
 import { UseCase } from '../../../../../shared/core/UseCase';
 import { CatId } from '../../../domain/CatId';
 import { CatLevelId } from '../../../domain/CatLevelId';
+import { ICatLevelRepository } from '../../../repositories/catLevelRepository';
+import { ICatRepository } from '../../../repositories/catRepository';
 
 interface UpgradeCatDTO {
     catId: CatId;
@@ -8,13 +10,15 @@ interface UpgradeCatDTO {
 }
 
 export class UpgradeCat implements UseCase<UpgradeCatDTO, Promise<any>> {
-    private catRepo: ICatRepo;
-    private catLevelRepo: ICatLevelRepo;
+    private catRepo: ICatRepository;
+    private catLevelRepo: ICatLevelRepository;
 
-    constructor(catRepo: ICatRepo, catLevelRepo: ICatLevelRepo) {
+    constructor(catRepo: ICatRepository, catLevelRepo: ICatLevelRepository) {
         this.catRepo = catRepo;
         this.catLevelRepo = catLevelRepo;
     }
 
-    public async execute(req: UpgradeCatDTO): Promise<any> {}
+    public async execute(req: UpgradeCatDTO): Promise<any> {
+        return { ok: true };
+    }
 }
