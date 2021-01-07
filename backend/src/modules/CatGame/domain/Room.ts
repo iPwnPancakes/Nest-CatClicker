@@ -2,8 +2,8 @@ import { Guard } from '../../../shared/core/Guard';
 import { Result } from '../../../shared/core/Result';
 import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
-import { Cats } from '../../Cats/domain/Cats';
-import { Decorations } from '../../Decorations/domain/Decorations';
+import { Cats } from './Cats';
+import { Decorations } from './Decorations';
 import { RoomId } from './RoomId';
 import { RoomLevelId } from './RoomLevelId';
 

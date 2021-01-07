@@ -1,9 +1,9 @@
 import { Result } from '../../../shared/core/Result';
 import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
-import { Cats } from '../../Cats/domain/Cats';
-import { Decorations } from '../../Decorations/domain/Decorations';
-import { Rooms } from '../../Rooms/domain/Rooms';
+import { Cats } from './Cats';
+import { Decorations } from './Decorations';
+import { Rooms } from './Rooms';
 import { InventoryId } from './InventoryId';
 import { InventoryOwner } from './InventoryOwner';
 

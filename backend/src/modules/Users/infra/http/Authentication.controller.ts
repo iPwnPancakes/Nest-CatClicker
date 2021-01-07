@@ -1,37 +1,34 @@
 import {
     Body,
-    ConflictException,
     Controller,
     HttpException,
     Post,
+    UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUser } from '../../useCases/createUser/CreateUser';
-import { DuplicateUserError } from '../../useCases/createUser/CreateUserErrors';
+import { UseCaseError } from '../../../../shared/core/UseCaseError';
+import { LogIn } from '../../useCases/logIn/LogIn';
+import { IncorrectPasswordError, UserDoesNotExistError } from '../../useCases/logIn/LogInErrors';
 
-@Controller('users')
-export class UsersController {
-    constructor(private createUserUseCase: CreateUser) {}
+@Controller('auth')
+export class AuthenticationController {
+    constructor(private logInUseCase: LogIn) {}
 
-    @Post('/create')
-    async createUser(
+    @Post('/login')
+    async logIn(
         @Body('email') email: string,
-        @Body('username') username: string,
         @Body('password') password: string,
     ): Promise<void> {
         try {
-            const result = await this.createUserUseCase.execute({
-                email,
-                username,
-                password,
-            });
+            const result = await this.logInUseCase.execute({ email, password });
 
             if (result.isLeft()) {
                 const error = result.value;
 
                 switch (error.constructor) {
-                    case DuplicateUserError: {
-                        throw new ConflictException(
-                            (error as DuplicateUserError).errorValue().message,
+                    case UserDoesNotExistError:
+                    case IncorrectPasswordError: {
+                        throw new UnauthorizedException(
+                            (error.errorValue() as UseCaseError).message,
                         );
                     }
                     default: {

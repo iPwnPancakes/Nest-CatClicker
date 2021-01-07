@@ -82,7 +82,7 @@ export class NestUserRepository {
 
         if (!userExists) {
             const nestTypeOrmUser = await UserMap.toPersistence(user);
-            await this.userRepository.create(nestTypeOrmUser);
+            await this.userRepository.save(nestTypeOrmUser);
         }
     }
 }

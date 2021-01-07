@@ -3,13 +3,14 @@ import { UseCase } from '../../../../shared/core/UseCase';
 import { User } from '../../domain/User';
 import { UserEmail } from '../../domain/UserEmail';
 import { UserUsername } from '../../domain/UserUsername';
-import { IUserRepository } from '../../repositories/userRepository';
+import { IUserRepository } from '../../repositories/ports/userRepository';
 import { CreateUserRequestDTO } from './CreateUserRequestDTO';
 import { CreateUserResponse } from './CreateUserResponse';
 import { UnexpectedError } from '../../../../shared/core/AppError';
 import { DuplicateUserError } from './CreateUserErrors';
 import { Injectable } from '@nestjs/common';
-import { NestUserRepository } from '../../repositories/implementations/nestUserRepository';
+import { NestUserRepository } from '../../repositories/adapters/nestUserRepository';
+import { UserPassword } from '../../domain/UserPassword';
 
 @Injectable()
 export class CreateUser
@@ -25,10 +26,12 @@ export class CreateUser
         const usernameOrError = UserUsername.create({
             value: request.username,
         });
+        const passwordOrError = UserPassword.create({ value: request.password });
 
         const validationResult = Result.combine([
             emailOrError,
             usernameOrError,
+            passwordOrError
         ]);
 
         if (validationResult.isFailure) {
@@ -37,6 +40,7 @@ export class CreateUser
 
         const email: UserEmail = emailOrError.getValue();
         const username: UserUsername = usernameOrError.getValue();
+        const password: UserPassword = passwordOrError.getValue();
 
         try {
             const emailAlreadyExists = await this.userRepo.emailExists(email);
@@ -57,6 +61,7 @@ export class CreateUser
             const userOrError: Result<User> = User.create({
                 email,
                 username,
+                password
             });
 
             if (userOrError.isFailure) {

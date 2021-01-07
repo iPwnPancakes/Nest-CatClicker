@@ -1,20 +1,29 @@
 import { UseCase } from '../../../../shared/core/UseCase';
-import { IUserRepository } from '../../../Users/repositories/userRepository';
+import { IUserRepository } from '../../../Users/repositories/ports/userRepository';
 import { LogInRequestDTO } from './LogInRequestDTO';
 import { Either, left, Result, right } from '../../../../shared/core/Result';
-import * as LogInErrors from './LogInErrors';
+import {
+    UserDoesNotExistError,
+    IncorrectPasswordError,
+    MalformedEmailError,
+} from './LogInErrors';
 import { User } from '../../../Users/domain/User';
 import { LogInResponseDTO } from './LogInResponseDTO';
 import { UserEmail } from '../../../Users/domain/UserEmail';
-import * as AppError from '../../../../shared/core/AppError';
+import { UnexpectedError } from '../../../../shared/core/AppError';
+import { UserPassword } from '../../../Users/domain/UserPassword';
+import { Injectable } from '@nestjs/common';
 
 type Response = Either<
-    | LogInErrors.UnsuccessfulLogInError
-    | LogInErrors.MalformedEmailError
+    | UserDoesNotExistError
+    | IncorrectPasswordError
+    | MalformedEmailError
+    | UnexpectedError
     | Result<any>,
     Result<LogInResponseDTO>
 >;
 
+@Injectable()
 export class LogIn implements UseCase<LogInRequestDTO, Promise<Response>> {
     private readonly userRepository: IUserRepository;
 
@@ -25,25 +34,42 @@ export class LogIn implements UseCase<LogInRequestDTO, Promise<Response>> {
     public async execute(request?: LogInRequestDTO): Promise<Response> {
         let user: User;
         let email: UserEmail;
+        let password: UserPassword;
 
         try {
             const emailOrError = UserEmail.create(request.email);
+            const passwordOrError = UserPassword.create({
+                value: request.password,
+            });
 
             if (emailOrError.isFailure) {
                 return left(Result.fail<any>(emailOrError.error.toString()));
             }
 
+            if (passwordOrError.isFailure) {
+                return left(Result.fail<any>(passwordOrError.error.toString()));
+            }
+
             email = emailOrError.getValue();
+            password = passwordOrError.getValue();
 
             try {
                 user = await this.userRepository.getUserByEmail(email);
             } catch (error) {
-                return left(new LogInErrors.UserDoesNotExistError());
+                return left(
+                    Result.fail<any>(
+                        new UserDoesNotExistError().errorValue().message,
+                    ),
+                );
             }
 
-            // Check password
-
-
+            if (!user.password.equals(password)) {
+                return left(
+                    Result.fail<any>(
+                        new IncorrectPasswordError().errorValue().message,
+                    ),
+                );
+            }
 
             return right(
                 Result.ok<LogInResponseDTO>({
@@ -51,7 +77,7 @@ export class LogIn implements UseCase<LogInRequestDTO, Promise<Response>> {
                 }),
             );
         } catch (err) {
-            return left(new AppError.UnexpectedError(err.toString()));
+            return left(new UnexpectedError(err.toString()));
         }
     }
 }

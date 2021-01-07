@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'Users' })
+@Entity({ name: 'users' })
 export class User {
     @PrimaryColumn({
         type: 'uuid',
@@ -22,4 +22,10 @@ export class User {
         unique: true,
     })
     username: string;
+
+    @Column({
+        type: 'text',
+        nullable: false
+    })
+    password: string;
 }

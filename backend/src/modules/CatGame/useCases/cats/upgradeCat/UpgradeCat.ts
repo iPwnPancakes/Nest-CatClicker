@@ -18,7 +18,7 @@ export class UpgradeCat implements UseCase<UpgradeCatDTO, Promise<any>> {
         this.catLevelRepo = catLevelRepo;
     }
 
-    public async execute(req: UpgradeCatDTO): Promise<any> {
+    public async execute(): Promise<any> {
         return { ok: true };
     }
 }

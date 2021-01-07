@@ -1,5 +1,6 @@
 export interface UserDTO {
-    user_id: string;
+    id: string;
     username: string;
     email: string;
+    password: string;
 }

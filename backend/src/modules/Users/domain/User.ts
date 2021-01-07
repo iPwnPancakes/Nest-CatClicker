@@ -3,11 +3,13 @@ import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { UserEmail } from './UserEmail';
 import { UserId } from './UserId';
+import { UserPassword } from './UserPassword';
 import { UserUsername } from './UserUsername';
 
 interface UserProps {
     username: UserUsername;
     email: UserEmail;
+    password: UserPassword;
 }
 
 export class User extends AggregateRoot<UserProps> {
@@ -29,5 +31,13 @@ export class User extends AggregateRoot<UserProps> {
 
     get username(): UserUsername {
         return this.props.username;
+    }
+
+    get password(): UserPassword {
+        return this.props.password;
+    }
+
+    public updatePassword(password: UserPassword): void {
+        this.props.password = password;
     }
 }
