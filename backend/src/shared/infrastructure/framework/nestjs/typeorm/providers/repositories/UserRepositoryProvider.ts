@@ -1,7 +1,7 @@
-import { Provider } from "@nestjs/common";
-import { NestUserRepository } from "../../../../../../../modules/Users/repositories/implementations/nestUserRepository";
+import { ClassProvider } from '@nestjs/common';
+import { NestUserRepository } from '../../../../../../../modules/Users/repositories/implementations/nestUserRepository';
 
-export const UserRepositoryProvider: Provider = {
+export const UserRepositoryProvider: ClassProvider<NestUserRepository> = {
     provide: 'UserRepository',
     useClass: NestUserRepository,
 };

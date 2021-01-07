@@ -2,7 +2,7 @@
     "type": "sqlite",
     "database": "./database/testing.sqlite",
     "entities": [
-        "dist/shared/infrastructure/framework/nestjs/**/*.entity{.ts,.js}"
+        "dist/**/*.entity{.ts,.js}"
     ],
     "migrations": ["dist/database/migrations/*{.ts,.js}"]
 }

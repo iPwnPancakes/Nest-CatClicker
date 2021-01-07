@@ -10,6 +10,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
-    "types": ["reflect-metadata", "node"]
+    "types": ["reflect-metadata", "node"],
   },
 }

@@ -1,19 +1,26 @@
-import { Result } from '../../../../shared/core/Result';
+import { left, Result, right } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
 import { User } from '../../domain/User';
 import { UserEmail } from '../../domain/UserEmail';
 import { UserUsername } from '../../domain/UserUsername';
 import { IUserRepository } from '../../repositories/userRepository';
-import { CreateUserDTO } from './CreateUserDTO';
+import { CreateUserRequestDTO } from './CreateUserRequestDTO';
+import { CreateUserResponse } from './CreateUserResponse';
+import { UnexpectedError } from '../../../../shared/core/AppError';
+import { DuplicateUserError } from './CreateUserErrors';
+import { Injectable } from '@nestjs/common';
+import { NestUserRepository } from '../../repositories/implementations/nestUserRepository';
 
-export class CreateUserUseCase implements UseCase<CreateUserDTO, any> {
+@Injectable()
+export class CreateUser
+    implements UseCase<CreateUserRequestDTO, Promise<CreateUserResponse>> {
     private userRepo: IUserRepository;
 
-    constructor(userRepo: IUserRepository) {
+    constructor(userRepo: NestUserRepository) {
         this.userRepo = userRepo;
     }
 
-    async execute(request?: CreateUserDTO): Promise<Result<any>> {
+    async execute(request?: CreateUserRequestDTO): Promise<CreateUserResponse> {
         const emailOrError = UserEmail.create(request.email);
         const usernameOrError = UserUsername.create({
             value: request.username,
@@ -25,7 +32,7 @@ export class CreateUserUseCase implements UseCase<CreateUserDTO, any> {
         ]);
 
         if (validationResult.isFailure) {
-            return Result.fail<void>(validationResult.error);
+            return left(Result.fail<void>(validationResult.error));
         }
 
         const email: UserEmail = emailOrError.getValue();
@@ -38,9 +45,13 @@ export class CreateUserUseCase implements UseCase<CreateUserDTO, any> {
             );
 
             if (emailAlreadyExists) {
-                return Result.fail<void>('Email already exists');
+                return left(
+                    new DuplicateUserError('User with email already exists'),
+                );
             } else if (usernameAlreadyExists) {
-                return Result.fail<void>('Username already exists');
+                return left(
+                    new DuplicateUserError('User with username already exists'),
+                );
             }
 
             const userOrError: Result<User> = User.create({
@@ -49,16 +60,16 @@ export class CreateUserUseCase implements UseCase<CreateUserDTO, any> {
             });
 
             if (userOrError.isFailure) {
-                return Result.fail<void>(userOrError.error.toString());
+                return left(Result.fail<User>(userOrError.error.toString()));
             }
 
             const user: User = userOrError.getValue();
 
             await this.userRepo.save(user);
 
-            return Result.ok<void>();
+            return right(Result.ok<void>());
         } catch (err) {
-            return Result.fail<void>(err);
+            return left(new UnexpectedError(err));
         }
     }
 }

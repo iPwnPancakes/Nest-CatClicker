@@ -1,23 +1,18 @@
-import { IUserRepository } from '../userRepository';
 import { User as UserDomainModel } from '../../domain/User';
 import { UserUsername } from '../../domain/UserUsername';
 import { UserEmail } from '../../domain/UserEmail';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User as UserOrmEntity } from '../../../../shared/infrastructure/framework/nestjs/typeorm/models/User.entity';
+import { User } from '../../../../shared/infrastructure/framework/nestjs/typeorm/models/User.entity';
 import { Repository } from 'typeorm';
 import { UserMap } from '../../mappers/userMap';
 
 @Injectable()
-export class NestUserRepository implements IUserRepository {
-    private userRepository: Repository<UserOrmEntity>;
-
+export class NestUserRepository {
     constructor(
-        @InjectRepository(UserOrmEntity)
-        userRepository: Repository<UserOrmEntity>,
-    ) {
-        this.userRepository = userRepository;
-    }
+        @InjectRepository(User)
+        private userRepository: Repository<User>,
+    ) {}
 
     async emailExists(userEmail: UserEmail): Promise<boolean> {
         const user = await this.userRepository.findOne({
