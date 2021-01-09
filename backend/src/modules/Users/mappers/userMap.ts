@@ -12,7 +12,7 @@ export class UserMap implements Mapper<User> {
             id: user.userId.id.toString(),
             username: user.username.value,
             email: user.email.value,
-            password: user.password.props.value
+            password: user.password.props.value,
         };
     }
 
@@ -21,15 +21,17 @@ export class UserMap implements Mapper<User> {
             value: raw.username,
         });
         const userEmailOrError = UserEmail.create(raw.email);
-        const userPasswordOrError = UserPassword.create(raw.password);
+        const userPasswordOrError = UserPassword.create({
+            value: raw.password,
+        });
 
         const userOrError = User.create(
             {
                 username: userUsernameOrError.getValue(),
                 email: userEmailOrError.getValue(),
-                password: userPasswordOrError.getValue()
+                password: userPasswordOrError.getValue(),
             },
-            new UniqueEntityId(raw.user_id),
+            new UniqueEntityId(raw.id),
         );
 
         if (userOrError.isFailure) {
@@ -44,7 +46,7 @@ export class UserMap implements Mapper<User> {
             id: user.userId.id.toString(),
             email: user.email.value,
             username: user.username.value,
-            password: user.password.props.value
+            password: user.password.props.value,
         };
     }
 }

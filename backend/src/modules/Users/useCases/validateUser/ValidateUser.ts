@@ -1,18 +1,19 @@
+import { Injectable } from '@nestjs/common';
+import { UnexpectedError } from '../../../../shared/core/AppError';
+import { Either, Result, left, right } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
-import { IUserRepository } from '../../../Users/repositories/ports/userRepository';
-import { LogInRequestDTO } from './LogInRequestDTO';
-import { Either, left, Result, right } from '../../../../shared/core/Result';
+import { User } from '../../domain/User';
+import { UserEmail } from '../../domain/UserEmail';
+import { UserPassword } from '../../domain/UserPassword';
+import { NestUserRepository } from '../../repositories/adapters/nestUserRepository';
+import { IUserRepository } from '../../repositories/ports/userRepository';
 import {
     UserDoesNotExistError,
     IncorrectPasswordError,
     MalformedEmailError,
-} from './LogInErrors';
-import { User } from '../../../Users/domain/User';
-import { LogInResponseDTO } from './LogInResponseDTO';
-import { UserEmail } from '../../../Users/domain/UserEmail';
-import { UnexpectedError } from '../../../../shared/core/AppError';
-import { UserPassword } from '../../../Users/domain/UserPassword';
-import { Injectable } from '@nestjs/common';
+} from './ValidateUserErrors';
+import { ValidateUserRequestDTO } from './ValidateUserRequestDTO';
+import { ValidateUserResponseDTO } from './ValidateUserResponseDTO';
 
 type Response = Either<
     | UserDoesNotExistError
@@ -20,18 +21,19 @@ type Response = Either<
     | MalformedEmailError
     | UnexpectedError
     | Result<any>,
-    Result<LogInResponseDTO>
+    Result<ValidateUserResponseDTO>
 >;
 
 @Injectable()
-export class LogIn implements UseCase<LogInRequestDTO, Promise<Response>> {
-    private readonly userRepository: IUserRepository;
+export class ValidateUser
+    implements UseCase<ValidateUserRequestDTO, Promise<Response>> {
+    private userRepository: IUserRepository;
 
-    constructor(userRepository: IUserRepository) {
+    constructor(userRepository: NestUserRepository) {
         this.userRepository = userRepository;
     }
 
-    public async execute(request?: LogInRequestDTO): Promise<Response> {
+    async execute(request: ValidateUserRequestDTO): Promise<Response> {
         let user: User;
         let email: UserEmail;
         let password: UserPassword;
@@ -72,8 +74,10 @@ export class LogIn implements UseCase<LogInRequestDTO, Promise<Response>> {
             }
 
             return right(
-                Result.ok<LogInResponseDTO>({
-                    userId: user.userId.id.toString(),
+                Result.ok<ValidateUserResponseDTO>({
+                    id: user.userId.id.toString(),
+                    username: user.username.value,
+                    email: user.email.value,
                 }),
             );
         } catch (err) {
