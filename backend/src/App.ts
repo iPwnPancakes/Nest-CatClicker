@@ -18,4 +18,8 @@ export class App {
     public async initializeHttpAsync(): Promise<void> {
         this.framework.listen(3000);
     }
+
+    get instance(): INestApplication {
+        return this.framework;
+    }
 }
