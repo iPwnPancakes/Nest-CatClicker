@@ -4,26 +4,20 @@ import {
     Controller,
     HttpException,
     Post,
+    ValidationPipe,
 } from '@nestjs/common';
 import { CreateUser } from '../../useCases/createUser/CreateUser';
 import { DuplicateUserError } from '../../useCases/createUser/CreateUserErrors';
+import { CreateUserDto } from './dtos/createUserDto';
 
 @Controller('users')
 export class UsersController {
     constructor(private createUserUseCase: CreateUser) {}
 
     @Post('/create')
-    async createUser(
-        @Body('email') email: string,
-        @Body('username') username: string,
-        @Body('password') password: string,
-    ): Promise<void> {
+    async createUser(@Body(new ValidationPipe()) createUserDto: CreateUserDto ): Promise<void> {
         try {
-            const result = await this.createUserUseCase.execute({
-                email,
-                username,
-                password,
-            });
+            const result = await this.createUserUseCase.execute(createUserDto);
 
             if (result.isLeft()) {
                 const error = result.value;
