@@ -37,6 +37,10 @@ export class User extends AggregateRoot<UserProps> {
         return this.props.password;
     }
 
+    public updateUsername(username: UserUsername) {
+        this.props.username = username;
+    }
+
     public updatePassword(password: UserPassword): void {
         this.props.password = password;
     }
