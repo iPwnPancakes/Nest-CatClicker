@@ -12,7 +12,6 @@ export class UserMap implements Mapper<User> {
             id: user.userId.id.toString(),
             username: user.username.value,
             email: user.email.value,
-            password: user.password.props.value,
         };
     }
 

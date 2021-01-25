@@ -10,6 +10,8 @@
         "sourceMap": true,
         "outDir": "./dist",
         "incremental": true,
-        "types": ["reflect-metadata", "node"]
+        "typeRoots": ["./node_modules/@types", "./src/@types"],
+        "types": ["node"],
+        "allowJs": true
     }
 }

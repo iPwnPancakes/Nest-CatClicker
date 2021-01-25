@@ -68,11 +68,11 @@ export class Left<L, A> {
         this.value = value;
     }
 
-    isLeft(): this is Left<L, A> {
+    isLeft(): boolean {
         return true;
     }
 
-    isRight(): this is Right<L, A> {
+    isRight(): boolean {
         return false;
     }
 }
@@ -84,11 +84,11 @@ export class Right<L, A> {
         this.value = value;
     }
 
-    isLeft(): this is Left<L, A> {
+    isLeft(): boolean {
         return false;
     }
 
-    isRight(): this is Right<L, A> {
+    isRight(): boolean {
         return true;
     }
 }
