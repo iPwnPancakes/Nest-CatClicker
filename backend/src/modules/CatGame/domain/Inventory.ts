@@ -1,20 +1,18 @@
 import { Result } from '../../../shared/core/Result';
-import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { Cats } from './Cats';
 import { Decorations } from './Decorations';
 import { Rooms } from './Rooms';
 import { InventoryId } from './InventoryId';
-import { InventoryOwner } from './InventoryOwner';
+import { Entity } from '../../../shared/domain/Entity';
 
 interface InventoryProps {
-    owner: InventoryOwner;
     cats: Cats;
     decorations: Decorations;
     rooms: Rooms;
 }
 
-export class Inventory extends AggregateRoot<InventoryProps> {
+export class Inventory extends Entity<InventoryProps> {
     private constructor(props: InventoryProps, id: UniqueEntityId) {
         super(props, id);
     }
@@ -28,10 +26,6 @@ export class Inventory extends AggregateRoot<InventoryProps> {
 
     get inventoryId(): InventoryId {
         return InventoryId.create(this._id).getValue();
-    }
-
-    get owner(): InventoryOwner {
-        return this.props.owner;
     }
 
     get cats(): Cats {
