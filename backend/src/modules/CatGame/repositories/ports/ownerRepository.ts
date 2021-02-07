@@ -1,4 +1,4 @@
-import { Owner } from "../domain/Owner";
+import { Owner } from "../../domain/Owner";
 
 export interface IOwnerRepository {
     exists(ownerId: string): Promise<boolean>;

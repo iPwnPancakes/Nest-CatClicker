@@ -1,4 +1,4 @@
-import { Cat } from '../domain/Cat';
+import { Cat } from '../../domain/Cat';
 
 export interface ICatRepository {
     exists(catId: string): Promise<boolean>;
