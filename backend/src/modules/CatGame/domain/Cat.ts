@@ -3,13 +3,12 @@ import { Result } from '../../../shared/core/Result';
 import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { CatId } from './CatId';
-import { CatLevel } from './CatLevel';
-import { Owner } from './Owner';
+import { OwnerId } from './OwnerId';
 
 interface CatProps {
     name: string;
-    currentCatLevel: CatLevel;
-    currentOwner: Owner;
+    owner_id: OwnerId;
+    clickRate: number;
 }
 
 export class Cat extends AggregateRoot<CatProps> {
@@ -35,21 +34,17 @@ export class Cat extends AggregateRoot<CatProps> {
         return this.props.name;
     }
 
-    get catLevelId() {
-        return this.props.currentCatLevel;
+    public updateOwner(newOwnerId: OwnerId): void {
+        this.props.owner_id = newOwnerId;
     }
 
-    public updateOwner(newOwner: Owner): void {
-        this.props.currentOwner = newOwner;
-    }
-
-    public updateCatLevel(newLevel: CatLevel): Result<void> {
-        if (newLevel.clickRate <= this.props.currentCatLevel.clickRate) {
-            return Result.fail<void>('Cannot downgrade cats');
+    public increaseClickRate(newClickRate: number): Result<void> {
+        if (newClickRate <= this.props.clickRate) {
+            Result.fail('Cannot decrease click rate');
         }
 
-        this.props.currentCatLevel = newLevel;
+        this.props.clickRate = newClickRate;
 
-        return Result.ok<void>();
+        return Result.ok();
     }
 }

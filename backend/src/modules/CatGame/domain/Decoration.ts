@@ -3,9 +3,11 @@ import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { DecorationEffects } from './DecorationEffects';
 import { DecorationId } from './DecorationId';
+import { OwnerId } from './OwnerId';
 
 interface DecorationProps {
     effects: DecorationEffects;
+    owner_id: OwnerId;
 }
 
 export class Decoration extends AggregateRoot<DecorationProps> {
@@ -26,5 +28,9 @@ export class Decoration extends AggregateRoot<DecorationProps> {
 
     get effects(): DecorationEffects {
         return this.props.effects;
+    }
+
+    get ownerId(): OwnerId {
+        return this.props.owner_id;
     }
 }

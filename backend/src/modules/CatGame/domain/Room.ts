@@ -6,13 +6,15 @@ import { Cat } from './Cat';
 import { Cats } from './Cats';
 import { Decoration } from './Decoration';
 import { Decorations } from './Decorations';
+import { OwnerId } from './OwnerId';
 import { RoomId } from './RoomId';
 
 interface RoomProps {
     name: string;
+    maxCatAmount: number;
+    owner_id: OwnerId;
     cats: Cats;
     decorations: Decorations;
-    maxCatAmount: number;
 }
 
 export class Room extends AggregateRoot<RoomProps> {
@@ -32,6 +34,10 @@ export class Room extends AggregateRoot<RoomProps> {
 
     get roomId(): RoomId {
         return RoomId.create(this._id).getValue();
+    }
+
+    get ownerId(): OwnerId {
+        return this.props.owner_id;
     }
 
     public upgradeRoomMaxCatAmount(newMaxAmount: number) {
