@@ -15,6 +15,16 @@ export class NestUserRepository implements IUserRepository {
         private userRepository: Repository<User>,
     ) {}
 
+    async exists(userId: string): Promise<boolean> {
+        const user: User = await this.userRepository.findOne(userId);
+
+        if (!user) {
+            return false;
+        }
+
+        return true;
+    }
+
     async emailExists(userEmail: UserEmail): Promise<boolean> {
         const user = await this.userRepository.findOne({
             email: userEmail.value,

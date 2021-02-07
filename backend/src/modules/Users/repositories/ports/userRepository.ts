@@ -3,6 +3,7 @@ import { UserEmail } from '../../domain/UserEmail';
 import { UserUsername } from '../../domain/UserUsername';
 
 export interface IUserRepository {
+    exists(userId: string): Promise<boolean>;
     emailExists(userEmail: UserEmail): Promise<boolean>;
     usernameExists(userUsername: UserUsername): Promise<boolean>;
     getUserByUserId(userId: string): Promise<User>;
