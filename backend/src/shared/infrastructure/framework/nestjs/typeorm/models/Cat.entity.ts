@@ -1,5 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Inventory } from './Inventory.entity';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'cat' })
 export class Cat {
@@ -21,10 +20,4 @@ export class Cat {
         nullable: false,
     })
     click_rate: number;
-
-    @ManyToOne(
-        () => Inventory,
-        inventory => inventory.cats,
-    )
-    inventory: Inventory;
 }
