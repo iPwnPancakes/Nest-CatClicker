@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import {
     Connection,
     EntitySubscriberInterface,
@@ -7,29 +6,38 @@ import {
     RemoveEvent,
     UpdateEvent,
 } from 'typeorm';
+import { AfterUserCreated } from '../../../../../modules/CatGame/subscriptions/afterUserCreated';
 import { DomainEvents } from '../../../../domain/events/DomainEvents';
 import { UniqueEntityId } from '../../../../domain/UniqueEntityId';
+import { User } from '../typeorm/models/User.entity';
 
 @EventSubscriber()
-export class TypeOrmEntitySubscriber implements EntitySubscriberInterface {
-    constructor(connection: Connection) {
+export class UserSubscriber implements EntitySubscriberInterface<User> {
+    constructor(
+        connection: Connection,
+        afterUserCreated: AfterUserCreated,
+    ) {
         connection.subscribers.push(this);
-        Logger.log('TypeOrm entity hooks setup', this.constructor.name);
     }
 
-    afterInsert(event: InsertEvent<any>) {
+    listenTo() {
+        return User;
+    }
+
+    afterInsert(event: InsertEvent<User>) {
         DomainEvents.dispatchEventsForAggregate(
             new UniqueEntityId(event.entity.id),
         );
     }
 
-    afterRemove(event: RemoveEvent<any>) {
+    afterRemove(event: RemoveEvent<User>) {
         DomainEvents.dispatchEventsForAggregate(
-            new UniqueEntityId(event.entityId),
+            new UniqueEntityId(event.entity.id),
         );
     }
 
-    afterUpdate(event: UpdateEvent<any>) {
+    afterUpdate(event: UpdateEvent<User>) {
+        console.log('after update');
         DomainEvents.dispatchEventsForAggregate(
             new UniqueEntityId(event.entity.id),
         );

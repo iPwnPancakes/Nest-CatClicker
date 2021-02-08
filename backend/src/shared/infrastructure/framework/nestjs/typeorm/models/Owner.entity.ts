@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 import { User } from './User.entity';
 
-@Entity({ name: 'owner' })
+@Entity({ name: 'owners' })
 export class Owner {
     @PrimaryColumn({
         type: 'uuid',

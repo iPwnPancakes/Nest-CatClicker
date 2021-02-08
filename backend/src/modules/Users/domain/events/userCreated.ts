@@ -4,7 +4,7 @@ import { User } from '../User';
 
 export class UserCreated implements IDomainEvent {
     public dateTimeOccured: Date;
-    private user;
+    public user: User;
 
     constructor(user: User) {
         this.user = user;

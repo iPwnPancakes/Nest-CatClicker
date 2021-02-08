@@ -25,8 +25,9 @@ export class DomainEvents {
         eventClassName: string,
     ): void {
         if (!this.handlersMap.has(eventClassName)) {
+            this.handlersMap.set(eventClassName, [handler]);
+        } else {
             const handlers = this.handlersMap.get(eventClassName);
-
             this.handlersMap.set(eventClassName, [...handlers, handler]);
         }
     }
