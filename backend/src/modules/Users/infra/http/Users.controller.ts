@@ -6,6 +6,7 @@ import {
     NotFoundException,
     Post,
     ValidationPipe,
+    Logger,
 } from '@nestjs/common';
 import { UserDTO } from '../../dtos/userDTO';
 import { UserMap } from '../../mappers/userMap';
@@ -15,6 +16,7 @@ import { GetUserByEmail } from '../../useCases/getUserByEmail/GetUserByEmail';
 import { UserWithEmailDoesNotExistError } from '../../useCases/getUserByEmail/GetUserByEmailErrors';
 import { CreateUserDto } from './dtos/createUserRouteDto';
 import { GetUserByEmailRouteDto } from './dtos/getUserByEmailRouteDto';
+import { UnexpectedError } from '../../../../shared/core/AppError';
 
 @Controller('users')
 export class UsersController {
@@ -72,19 +74,20 @@ export class UsersController {
                 switch (error.constructor) {
                     case DuplicateUserError: {
                         throw new ConflictException(
-                            (error as DuplicateUserError).errorValue().message,
+                            (error as DuplicateUserError).errorValue(),
                         );
                     }
                     default: {
                         throw new HttpException(
-                            result.value.error.toString(),
+                            (error as UnexpectedError).errorValue(),
                             500,
                         );
                     }
                 }
             }
         } catch (err) {
-            throw new HttpException(err.toString(), 500);
+            Logger.error(err);
+            throw new HttpException(err.message || 'An unexpected error occured', 500);
         }
     }
 }
