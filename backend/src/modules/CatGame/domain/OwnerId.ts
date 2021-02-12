@@ -11,7 +11,7 @@ export class OwnerId extends Entity<any> {
         return Result.ok<OwnerId>(new OwnerId(id));
     }
 
-    public id(): UniqueEntityId {
+    get id(): UniqueEntityId {
         return this._id;
     }
 }
