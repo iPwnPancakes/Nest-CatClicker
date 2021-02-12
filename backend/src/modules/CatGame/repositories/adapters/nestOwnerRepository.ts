@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Owner } from '../../../../shared/infrastructure/framework/nestjs/typeorm/models/Owner.entity';
@@ -5,6 +6,7 @@ import { Owner as OwnerDomainModel } from '../../domain/Owner';
 import { OwnerMap } from '../../mappers/ownerMap';
 import { IOwnerRepository } from '../ports/ownerRepository';
 
+@Injectable()
 export class NestOwnerRepository implements IOwnerRepository {
     constructor(
         @InjectRepository(Owner)
