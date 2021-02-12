@@ -1,4 +1,5 @@
 import {
+    Column,
     Entity,
     JoinColumn,
     OneToOne,
@@ -18,4 +19,11 @@ export class Owner {
     @OneToOne(() => User)
     @JoinColumn({ name: 'user_id' })
     user: User;
+
+    @Column({
+        type: 'uuid',
+        nullable: false,
+        unique: true
+    })
+    user_id: string;
 }
