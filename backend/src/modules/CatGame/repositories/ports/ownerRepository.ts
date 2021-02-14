@@ -1,7 +1,8 @@
-import { Owner } from "../../domain/Owner";
+import { Owner } from '../../domain/Owner';
 
 export interface IOwnerRepository {
     exists(ownerId: string): Promise<boolean>;
+    getOwnerByOwnerId(ownerId: string): Promise<Owner>;
     getOwnerByUserId(userId: string): Promise<Owner>;
     getOwnerByCatId(catId: string): Promise<Owner>;
     getOwnerByUserName(username: string): Promise<Owner>;

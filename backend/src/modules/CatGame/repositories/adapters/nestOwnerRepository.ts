@@ -23,11 +23,21 @@ export class NestOwnerRepository implements IOwnerRepository {
         return true;
     }
 
+    async getOwnerByOwnerId(ownerId: string): Promise<OwnerDomainModel> {
+        const owner: Owner = await this.ownerRepo.findOne(ownerId);
+
+        if (!owner) {
+            throw new Error('Owner not found');
+        }
+
+        return OwnerMap.toDomain(owner);
+    }
+
     async getOwnerByUserId(userId: string): Promise<OwnerDomainModel> {
         const owner: Owner = await this.ownerRepo.findOne({
             where: {
                 user: {
-                    id: userId
+                    id: userId,
                 },
             },
         });
