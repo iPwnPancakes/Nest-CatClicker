@@ -8,6 +8,7 @@ import { Owner } from '../../domain/Owner';
 import { NestOwnerRepository } from '../../repositories/adapters/nestOwnerRepository';
 import { IOwnerRepository } from '../../repositories/ports/ownerRepository';
 import { CreateOwnerDTO } from './CreateOwnerDTO';
+import { UserDoesNotExistError } from './CreateOwnerErrors';
 import { CreateOwnerResponse } from './CreateOwnerResponse';
 
 @Injectable()
@@ -22,10 +23,14 @@ export class CreateOwner
     }
 
     async execute(request?: CreateOwnerDTO): Promise<CreateOwnerResponse> {
-        const user: User = await this.userRepo.getUserByUserId(request.user_id);
+        let user: User;
 
-        if (!user) {
-            throw new Error('User with that ID does not exist');
+        try {
+            user = await this.userRepo.getUserByUserId(
+                request.user_id,
+            );
+        } catch (err) {
+            return left(new UserDoesNotExistError(request.user_id));
         }
 
         const ownerOrError = Owner.create({
