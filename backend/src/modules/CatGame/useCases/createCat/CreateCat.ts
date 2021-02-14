@@ -3,9 +3,8 @@ import { UnexpectedError } from '../../../../shared/core/AppError';
 import { left, Result } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
 import { Cat } from '../../domain/Cat';
-import { Owner } from '../../domain/Owner';
-import { ICatRepository } from '../../repositories/ports/catRepository';
-import { IOwnerRepository } from '../../repositories/ports/ownerRepository';
+import { Room } from '../../domain/Room';
+import { IRoomRepository } from '../../repositories/ports/roomRepository';
 import { CreateCatDTO } from './CreateCatDTO';
 import { OwnerDoesNotExistError } from './CreateCatErrors';
 import { CreateCatResponse } from './CreateCatResponse';
@@ -14,24 +13,20 @@ import { CreateCatResponse } from './CreateCatResponse';
 export class CreateCat
     implements UseCase<CreateCatDTO, Promise<CreateCatResponse>> {
     constructor(
-        private catRepo: ICatRepository,
-        private ownerRepo: IOwnerRepository,
+        private roomRepo: IRoomRepository
     ) {}
 
     async execute(request?: CreateCatDTO): Promise<CreateCatResponse> {
         try {
-            let owner: Owner;
+            let room: Room;
 
             try {
-                owner = await this.ownerRepo.getOwnerByOwnerId(
-                    request.owner_id,
-                );
+                room = await this.roomRepo.getRoomByRoomId(request.room_id);
             } catch (err) {
-                return left(new OwnerDoesNotExistError(request.owner_id));
+                return left(new OwnerDoesNotExistError(request.room_id));
             }
 
             const catOrError = Cat.create({
-                owner_id: owner.ownerId,
                 clickRate: request.clickRate,
                 name: request.name,
             });
@@ -40,7 +35,11 @@ export class CreateCat
                 return left(Result.fail(catOrError.error.toString()));
             }
 
-            this.catRepo.save(catOrError.getValue());
+            const cat = catOrError.getValue();
+
+            room.addCat(cat);
+
+            await this.roomRepo.save(room);
         } catch (err) {
             return left(UnexpectedError.create(err));
         }

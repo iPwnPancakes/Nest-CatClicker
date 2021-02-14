@@ -1,5 +1,5 @@
 export interface CreateCatDTO {
-    owner_id: string;
+    room_id: string;
     name: string;
     clickRate: number;
 }
