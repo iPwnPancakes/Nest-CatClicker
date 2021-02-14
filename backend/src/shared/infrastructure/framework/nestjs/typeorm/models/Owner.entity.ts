@@ -2,9 +2,11 @@ import {
     Column,
     Entity,
     JoinColumn,
+    OneToMany,
     OneToOne,
     PrimaryColumn,
 } from 'typeorm';
+import { Room } from './Room.entity';
 import { User } from './User.entity';
 
 @Entity({ name: 'owners' })
@@ -23,7 +25,14 @@ export class Owner {
     @Column({
         type: 'uuid',
         nullable: false,
-        unique: true
+        unique: true,
     })
     user_id: string;
+
+    @OneToMany(
+        () => Room,
+        room => room.owner,
+    )
+    @JoinColumn()
+    rooms: Room[];
 }

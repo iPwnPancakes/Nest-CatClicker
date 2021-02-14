@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Room } from './Room.entity';
 
-@Entity({ name: 'cats' })
-export class Cat {
+@Entity({ name: 'decorations' })
+export class Decoration {
     @PrimaryColumn({
         type: 'uuid',
         nullable: false,
@@ -13,18 +13,19 @@ export class Cat {
     @Column({
         type: 'text',
         nullable: false,
+        unique: true,
     })
     name: string;
 
     @Column({
-        type: 'integer',
+        type: 'double',
         nullable: false,
     })
-    click_rate: number;
+    cat_click_multiplier: number;
 
     @ManyToOne(
         () => Room,
-        room => room.cats,
+        room => room.decorations,
     )
     @JoinColumn()
     room: Room;
