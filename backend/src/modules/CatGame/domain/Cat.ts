@@ -1,17 +1,15 @@
 import { Guard } from '../../../shared/core/Guard';
 import { Result } from '../../../shared/core/Result';
-import { AggregateRoot } from '../../../shared/domain/AggregateRoot';
+import { Entity } from '../../../shared/domain/Entity';
 import { UniqueEntityId } from '../../../shared/domain/UniqueEntityId';
 import { CatId } from './CatId';
-import { OwnerId } from './OwnerId';
 
 interface CatProps {
     name: string;
-    owner_id: OwnerId;
     clickRate: number;
 }
 
-export class Cat extends AggregateRoot<CatProps> {
+export class Cat extends Entity<CatProps> {
     private constructor(props: CatProps, id?: UniqueEntityId) {
         super(props, id);
     }
@@ -34,8 +32,8 @@ export class Cat extends AggregateRoot<CatProps> {
         return this.props.name;
     }
 
-    public updateOwner(newOwnerId: OwnerId): void {
-        this.props.owner_id = newOwnerId;
+    get clickRate() {
+        return this.props.clickRate;
     }
 
     public increaseClickRate(newClickRate: number): Result<void> {
