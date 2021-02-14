@@ -7,4 +7,5 @@ export interface IOwnerRepository {
     getOwnerByCatId(catId: string): Promise<Owner>;
     getOwnerByUserName(username: string): Promise<Owner>;
     save(owner: Owner): Promise<void>;
+    delete(owner: Owner): Promise<void>;
 }
