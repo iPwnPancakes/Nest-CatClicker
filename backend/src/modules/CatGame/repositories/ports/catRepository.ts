@@ -6,6 +6,6 @@ export interface ICatRepository {
     getCatsByLevel(levelId: string): Promise<Cat[]>;
     getCatsByOwnerId(ownerId: string): Promise<Cat[]>;
     save(cat: Cat): Promise<void>;
-    deleteCat(cat: Cat): Promise<void>;
+    delete(cat: Cat): Promise<void>;
     saveBulk(cats: Cat[]): Promise<void>;
 }
