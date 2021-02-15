@@ -7,7 +7,15 @@ export class Cats extends WatchedList<Cat> {
     }
 
     public static create(initialCats?: Cat[]): Cats {
-        return new Cats(initialCats ?? []);
+        if (!Array.isArray(initialCats)) {
+            return new Cats([]);
+        }
+
+        if (!initialCats.every(item => item instanceof Cat)) {
+            return new Cats([]);
+        }
+
+        return new Cats(initialCats);
     }
 
     public compareItems(a: Cat, b: Cat): boolean {

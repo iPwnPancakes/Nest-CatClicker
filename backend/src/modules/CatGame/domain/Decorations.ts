@@ -7,7 +7,15 @@ export class Decorations extends WatchedList<Decoration> {
     }
 
     public static create(initialDecorations?: Decoration[]) {
-        return new Decorations(initialDecorations ?? []);
+        if (!Array.isArray(initialDecorations)) {
+            return new Decorations([]);
+        }
+
+        if (!initialDecorations.every(item => item instanceof Decoration)) {
+            return new Decorations([]);
+        }
+
+        return new Decorations(initialDecorations);
     }
 
     public compareItems(a: Decoration, b: Decoration): boolean {
