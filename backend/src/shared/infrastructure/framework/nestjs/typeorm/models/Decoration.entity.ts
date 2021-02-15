@@ -29,4 +29,10 @@ export class Decoration {
     )
     @JoinColumn()
     room: Room;
+
+    @Column({
+        type: 'uuid',
+        nullable: false,
+    })
+    room_id: string;
 }

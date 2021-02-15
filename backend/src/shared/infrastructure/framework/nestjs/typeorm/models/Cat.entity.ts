@@ -28,4 +28,10 @@ export class Cat {
     )
     @JoinColumn()
     room: Room;
+
+    @Column({
+        type: 'uuid',
+        nullable: false,
+    })
+    room_id: string;
 }

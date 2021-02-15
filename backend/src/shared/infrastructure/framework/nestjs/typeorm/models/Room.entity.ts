@@ -32,6 +32,12 @@ export class Room {
     })
     max_cat_amount: number;
 
+    @Column({
+        type: 'uuid',
+        nullable: false,
+    })
+    owner_id: string;
+
     @ManyToOne(
         () => Owner,
         owner => owner.rooms,
