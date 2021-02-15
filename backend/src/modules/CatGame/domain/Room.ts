@@ -40,6 +40,14 @@ export class Room extends AggregateRoot<RoomProps> {
         return this.props.owner_id;
     }
 
+    get name(): string {
+        return this.props.name;
+    }
+
+    get maxCatAmount(): number {
+        return this.props.maxCatAmount;
+    }
+
     public upgradeRoomMaxCatAmount(newMaxAmount: number) {
         if (newMaxAmount < this.props.maxCatAmount) {
             throw new Error('Cannot lower max cat amount');
