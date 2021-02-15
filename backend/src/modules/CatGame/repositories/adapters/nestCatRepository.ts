@@ -1,10 +1,13 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cat } from '../../../../shared/infrastructure/framework/nestjs/typeorm/models/Cat.entity';
 import { Cat as CatDomainModel } from '../../domain/Cat';
+import { Cats } from '../../domain/Cats';
 import { CatMapper } from '../../mappers/catMap';
 import { ICatRepository } from '../ports/catRepository';
 
+@Injectable()
 export class NestCatRepository implements ICatRepository {
     constructor(
         @InjectRepository(Cat)
@@ -60,8 +63,8 @@ export class NestCatRepository implements ICatRepository {
         await this.catRepo.delete(cat.catId.id.toString());
     }
 
-    async saveBulk(cats: CatDomainModel[]): Promise<void> {
-        for (const cat of cats) {
+    async saveBulk(cats: Cats): Promise<void> {
+        for (const cat of cats.getItems()) {
             await this.save(cat);
         }
     }

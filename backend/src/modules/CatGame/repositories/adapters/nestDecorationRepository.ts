@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Decoration } from '../../../../shared/infrastructure/framework/nestjs/typeorm/models/Decoration.entity';
@@ -6,6 +7,7 @@ import { Decorations } from '../../domain/Decorations';
 import { DecorationMap } from '../../mappers/decorationMap';
 import { IDecorationRepository } from '../ports/decorationRepository';
 
+@Injectable()
 export class NestDecorationRepository implements IDecorationRepository {
     constructor(
         @InjectRepository(Decoration)
