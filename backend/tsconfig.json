@@ -11,8 +11,8 @@
         "outDir": "./dist",
         "incremental": true,
         "typeRoots": ["./node_modules/@types", "./src/@types"],
-        "types": ["node"],
+        "types": ["node", "jest"],
         "allowJs": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "test/**/*"]
 }

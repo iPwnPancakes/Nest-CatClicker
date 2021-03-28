@@ -1,0 +1,10 @@
+{
+    "moduleFileExtensions": ["js", "ts"],
+    "rootDir": ".",
+    "testEnvironment": "node",
+    "testRegex": ".test.ts$",
+    "transform": {
+        "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "reporters": [["jest-nyancat-reporter", { "suppressErrorReporter": false }]]
+}

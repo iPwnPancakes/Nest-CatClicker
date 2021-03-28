@@ -19,6 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:unit": "jest --config ./test/Unit/jest-unit.json",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "dotenv": "^8.2.0",
+    "jest-nyancat-reporter": "^2.0.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "sequelize": "^6.3.5",
@@ -46,7 +48,7 @@
     "@nestjs/testing": "^7.5.1",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.3",
-    "@types/jest": "26.0.15",
+    "@types/jest": "^26.0.15",
     "@types/node": "^14.14.20",
     "@types/socket.io": "^2.1.11",
     "@types/sqlite3": "^3.1.7",
@@ -56,7 +58,7 @@
     "eslint": "7.12.1",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
-    "jest": "26.6.2",
+    "jest": "^26.6.2",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",
     "ts-jest": "26.4.3",

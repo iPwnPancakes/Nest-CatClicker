@@ -9,7 +9,7 @@ import { IOwnerRepository } from '../../repositories/ports/ownerRepository';
 import { IRoomRepository } from '../../repositories/ports/roomRepository';
 import { CreateRoomDTO } from './CreateRoomDTO';
 import { OwnerDoesNotExistError } from './CreateRoomErrors';
-import { CreateRoomResponse } from './CreateRoomResponse';
+import { CreateRoomResponse } from './CreateRoomResponse';  
 
 export class CreateRoom
     implements UseCase<CreateRoomDTO, Promise<CreateRoomResponse>> {
