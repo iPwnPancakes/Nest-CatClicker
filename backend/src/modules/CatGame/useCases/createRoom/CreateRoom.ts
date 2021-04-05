@@ -1,25 +1,21 @@
+import { Inject } from '@nestjs/common';
 import { left, Result, right } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
 import { Cats } from '../../domain/Cats';
 import { Decorations } from '../../domain/Decorations';
 import { Room } from '../../domain/Room';
-import { NestOwnerRepository } from '../../repositories/adapters/nestOwnerRepository';
-import { NestRoomRepository } from '../../repositories/adapters/nestRoomRepository';
 import { IOwnerRepository } from '../../repositories/ports/ownerRepository';
 import { IRoomRepository } from '../../repositories/ports/roomRepository';
 import { CreateRoomDTO } from './CreateRoomDTO';
 import { OwnerDoesNotExistError } from './CreateRoomErrors';
-import { CreateRoomResponse } from './CreateRoomResponse';  
+import { CreateRoomResponse } from './CreateRoomResponse';
 
 export class CreateRoom
     implements UseCase<CreateRoomDTO, Promise<CreateRoomResponse>> {
-    private roomRepo: IRoomRepository;
-    private ownerRepo: IOwnerRepository;
-
-    constructor(roomRepo: NestRoomRepository, ownerRepo: NestOwnerRepository) {
-        this.roomRepo = roomRepo;
-        this.ownerRepo = ownerRepo;
-    }
+    constructor(
+        @Inject(IRoomRepository) private roomRepo: IRoomRepository,
+        @Inject(IOwnerRepository) private ownerRepo: IOwnerRepository,
+    ) {}
 
     async execute(request?: CreateRoomDTO): Promise<CreateRoomResponse> {
         const owner = await this.ownerRepo.getOwnerByOwnerId(request.owner_id);

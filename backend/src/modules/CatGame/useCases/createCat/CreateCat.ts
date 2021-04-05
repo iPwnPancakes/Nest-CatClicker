@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UnexpectedError } from '../../../../shared/core/AppError';
 import { left, Result } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
@@ -12,9 +12,7 @@ import { CreateCatResponse } from './CreateCatResponse';
 @Injectable()
 export class CreateCat
     implements UseCase<CreateCatDTO, Promise<CreateCatResponse>> {
-    constructor(
-        private roomRepo: IRoomRepository
-    ) {}
+    constructor(@Inject(IRoomRepository) private roomRepo: IRoomRepository) {}
 
     async execute(request?: CreateCatDTO): Promise<CreateCatResponse> {
         try {

@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { left, Result } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
 import { User } from '../../../Users/domain/User';
-import { NestUserRepository } from '../../../Users/repositories/adapters/nestUserRepository';
 import { IUserRepository } from '../../../Users/repositories/ports/userRepository';
 import { Owner } from '../../domain/Owner';
-import { NestOwnerRepository } from '../../repositories/adapters/nestOwnerRepository';
 import { IOwnerRepository } from '../../repositories/ports/ownerRepository';
 import { CreateOwnerDTO } from './CreateOwnerDTO';
 import { UserDoesNotExistError } from './CreateOwnerErrors';
@@ -14,21 +12,16 @@ import { CreateOwnerResponse } from './CreateOwnerResponse';
 @Injectable()
 export class CreateOwner
     implements UseCase<CreateOwnerDTO, Promise<CreateOwnerResponse>> {
-    private ownerRepo: IOwnerRepository;
-    private userRepo: IUserRepository;
-
-    constructor(ownerRepo: NestOwnerRepository, userRepo: NestUserRepository) {
-        this.ownerRepo = ownerRepo;
-        this.userRepo = userRepo;
-    }
+    constructor(
+        @Inject(IOwnerRepository) private ownerRepo: IOwnerRepository,
+        @Inject(IUserRepository) private userRepo: IUserRepository,
+    ) {}
 
     async execute(request?: CreateOwnerDTO): Promise<CreateOwnerResponse> {
         let user: User;
 
         try {
-            user = await this.userRepo.getUserByUserId(
-                request.user_id,
-            );
+            user = await this.userRepo.getUserByUserId(request.user_id);
         } catch (err) {
             return left(new UserDoesNotExistError(request.user_id));
         }
