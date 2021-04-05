@@ -15,7 +15,10 @@ export class Cat extends Entity<CatProps> {
     }
 
     public static create(props: CatProps, id?: UniqueEntityId): Result<Cat> {
-        const guardResult = Guard.againstAtLeast(1, props.name);
+        const guardResult = Guard.combine([
+            Guard.againstAtLeast(1, props.name),
+            Guard.greaterThan(1, props.clickRate),
+        ]);
 
         if (!guardResult.succeeded) {
             return Result.fail<Cat>(guardResult.message);
