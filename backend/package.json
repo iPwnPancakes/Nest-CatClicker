@@ -20,6 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:unit": "jest --config ./test/Unit/jest-unit.json",
+    "test:int": "jest --config ./test/Integration/jest-integration.json",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
@@ -45,7 +46,7 @@
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
-    "@nestjs/testing": "^7.5.1",
+    "@nestjs/testing": "^7.6.15",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.3",
     "@types/jest": "^26.0.15",
