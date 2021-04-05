@@ -4,13 +4,17 @@ import { IAuthService } from '../../../../../src/modules/Users/services/AuthServ
 import { ISessionService } from '../../../../../src/modules/Users/services/SessionService/ports/sessionService';
 import { LoginDTO } from '../../../../../src/modules/Users/useCases/login/LoginDTO';
 import { left, Result, right } from '../../../../../src/shared/core/Result';
+import { User } from '../../../../../src/modules/Users/domain/User';
+import { UserUsername } from '../../../../../src/modules/Users/domain/UserUsername';
+import { UserPassword } from '../../../../../src/modules/Users/domain/UserPassword';
+import { UserEmail } from '../../../../../src/modules/Users/domain/UserEmail';
 
 describe('Login use case', () => {
     let userRepo: IUserRepository;
     let authService: IAuthService;
     let sessionService: ISessionService;
-
     let useCase: Login;
+    let fakeUser: User;
 
     beforeEach(async () => {
         userRepo = {
@@ -35,13 +39,19 @@ describe('Login use case', () => {
             checkIfSessionExpired: jest.fn(),
         };
 
+        fakeUser = User.create({
+            username: UserUsername.create({ value: 'asdfasdf' }).getValue(),
+            password: UserPassword.create({ value: 'asdfasdfasdf' }).getValue(),
+            email: UserEmail.create('asdfasdf@asdfasdf.com').getValue(),
+        }).getValue();
+
         useCase = new Login(userRepo, authService, sessionService);
     });
 
     it('Fails if invalid username', async () => {
         const dto: LoginDTO = {
             username: '',
-            password: 'asdf',
+            password: fakeUser.password.props.value,
         };
 
         const result = await useCase.execute(dto);
@@ -51,7 +61,7 @@ describe('Login use case', () => {
 
     it('Fails if invalid password', async () => {
         const dto: LoginDTO = {
-            username: 'asdfasdf',
+            username: fakeUser.username.value,
             password: '',
         };
 
@@ -65,8 +75,8 @@ describe('Login use case', () => {
             Promise.resolve(left(Result.fail('Failing for test')));
 
         const dto: LoginDTO = {
-            username: 'asdfasdf',
-            password: 'asdfasdf',
+            username: fakeUser.username.value,
+            password: fakeUser.password.props.value,
         };
 
         const result = await useCase.execute(dto);
@@ -81,8 +91,8 @@ describe('Login use case', () => {
         sessionService.userHasSession = jest.fn(async () => false);
 
         const dto: LoginDTO = {
-            username: 'asdfasdf',
-            password: 'asdfasdf',
+            username: fakeUser.username.value,
+            password: fakeUser.password.props.value,
         };
 
         await useCase.execute(dto);
@@ -98,8 +108,8 @@ describe('Login use case', () => {
         sessionService.userHasSession = jest.fn(async () => true);
 
         const dto: LoginDTO = {
-            username: 'asdfasdf',
-            password: 'asdfasdf',
+            username: fakeUser.username.value,
+            password: fakeUser.password.props.value,
         };
 
         await useCase.execute(dto);
@@ -113,12 +123,79 @@ describe('Login use case', () => {
             Promise.resolve(right(Result.ok()));
 
         const dto: LoginDTO = {
-            username: 'asdfasdf',
-            password: 'asdfasdf',
+            username: fakeUser.username.value,
+            password: fakeUser.password.props.value,
         };
 
         const result = await useCase.execute(dto);
 
         expect(result.isRight()).toBeTruthy();
+    });
+
+    it('Throws if auth service throws', async () => {
+        authService.validateUserCredentials = async () => {
+            throw new Error('Fake error');
+        };
+
+        const dto: LoginDTO = {
+            username: fakeUser.username.value,
+            password: fakeUser.password.props.value,
+        };
+
+        expect.assertions(2);
+
+        try {
+            await useCase.execute(dto);
+        } catch (e) {
+            expect(e instanceof Error).toBeTruthy();
+            expect(e.message).toEqual('Fake error');
+        }
+    });
+
+    it('Throws if user repository throws', async () => {
+        authService.validateUserCredentials = () =>
+            Promise.resolve(right(Result.ok()));
+
+        userRepo.getUserByUsername = async () => {
+            throw new Error('Fake error');
+        };
+
+        const dto: LoginDTO = {
+            username: fakeUser.username.value,
+            password: fakeUser.password.props.value,
+        };
+
+        expect.assertions(2);
+
+        try {
+            await useCase.execute(dto);
+        } catch (e) {
+            expect(e instanceof Error).toBeTruthy();
+            expect(e.message).toEqual('Fake error');
+        }
+    });
+
+    it('Throws if session service throws', async () => {
+        authService.validateUserCredentials = async () => right(Result.ok());
+
+        userRepo.getUserByUsername = async () => fakeUser;
+
+        sessionService.userHasSession = async () => {
+            throw new Error('Fake error');
+        };
+
+        const dto: LoginDTO = {
+            username: fakeUser.username.value,
+            password: fakeUser.password.props.value,
+        };
+
+        expect.assertions(2);
+
+        try {
+            await useCase.execute(dto);
+        } catch (e) {
+            expect(e instanceof Error).toBeTruthy();
+            expect(e.message).toEqual('Fake error');
+        }
     });
 });
