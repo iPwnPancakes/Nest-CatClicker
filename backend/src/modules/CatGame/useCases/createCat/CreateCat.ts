@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UnexpectedError } from '../../../../shared/core/AppError';
-import { left, Result } from '../../../../shared/core/Result';
+import { left, Result, right } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
 import { Cat } from '../../domain/Cat';
 import { Room } from '../../domain/Room';
@@ -16,13 +16,15 @@ export class CreateCat
 
     async execute(request?: CreateCatDTO): Promise<CreateCatResponse> {
         try {
-            let room: Room;
+            const exists = await this.roomRepo.exists(request.room_id);
 
-            try {
-                room = await this.roomRepo.getRoomByRoomId(request.room_id);
-            } catch (err) {
+            if (!exists) {
                 return left(new OwnerDoesNotExistError(request.room_id));
             }
+
+            const room: Room = await this.roomRepo.getRoomByRoomId(
+                request.room_id,
+            );
 
             const catOrError = Cat.create({
                 clickRate: request.clickRate,
@@ -38,6 +40,8 @@ export class CreateCat
             room.addCat(cat);
 
             await this.roomRepo.save(room);
+
+            return right(Result.ok());
         } catch (err) {
             return left(UnexpectedError.create(err));
         }
