@@ -7,6 +7,8 @@ import { IUserRepository } from '../../repositories/ports/userRepository';
 
 export type AuthServiceResponse = Either<Result<any>, Result<void>>;
 
+export const IAuthService = Symbol('IAuthService');
+
 export interface IAuthService {
     validateUserCredentials(
         username: UserUsername,

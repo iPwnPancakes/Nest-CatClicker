@@ -2,6 +2,8 @@ import { User } from '../../domain/User';
 import { UserEmail } from '../../domain/UserEmail';
 import { UserUsername } from '../../domain/UserUsername';
 
+export const IUserRepository = Symbol('IUserRepository');
+
 export interface IUserRepository {
     exists(userId: string): Promise<boolean>;
     emailExists(userEmail: UserEmail): Promise<boolean>;

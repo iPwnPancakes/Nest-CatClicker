@@ -1,27 +1,20 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { left, Result, right } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
 import { UserPassword } from '../../domain/UserPassword';
 import { UserUsername } from '../../domain/UserUsername';
-import { NestUserRepository } from '../../repositories/adapters/nestUserRepository';
 import { IUserRepository } from '../../repositories/ports/userRepository';
-import {
-    AuthService,
-    IAuthService,
-} from '../../services/AuthService/authService';
-import { SqliteSessionService } from '../../services/SessionService/adapters/sqliteSessionService';
+import { IAuthService } from '../../services/AuthService/authService';
 import { ISessionService } from '../../services/SessionService/ports/sessionService';
 import { LoginDTO } from './LoginDTO';
 import { LoginResponse } from './LoginResponse';
 
+@Injectable()
 export class Login implements UseCase<LoginDTO, Promise<LoginResponse>> {
-    private userRepo: IUserRepository;
-    private authService: IAuthService;
-    private sessionService: ISessionService;
-
     constructor(
-        userRepo: NestUserRepository,
-        authService: AuthService,
-        sessionService: SqliteSessionService,
+        @Inject(IUserRepository) private userRepo: IUserRepository,
+        @Inject(IAuthService) private authService: IAuthService,
+        @Inject(ISessionService) private sessionService: ISessionService,
     ) {
         this.userRepo = userRepo;
         this.authService = authService;
@@ -59,7 +52,7 @@ export class Login implements UseCase<LoginDTO, Promise<LoginResponse>> {
 
         const user = await this.userRepo.getUserByUsername(userUsername);
 
-        const userHasSession = this.sessionService.userHasSession(user);
+        const userHasSession = await this.sessionService.userHasSession(user);
 
         if (userHasSession) {
             await this.sessionService.deleteUserSession(user);
