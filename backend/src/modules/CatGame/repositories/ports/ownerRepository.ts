@@ -1,5 +1,7 @@
 import { Owner } from '../../domain/Owner';
 
+export const IOwnerRepository = Symbol('IOwnerRepository');
+
 export interface IOwnerRepository {
     exists(ownerId: string): Promise<boolean>;
     getOwnerByOwnerId(ownerId: string): Promise<Owner>;

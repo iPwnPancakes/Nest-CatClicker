@@ -1,6 +1,8 @@
 import { Cat } from '../../domain/Cat';
 import { Cats } from '../../domain/Cats';
 
+export const ICatRepository = Symbol('ICatRepository');
+
 export interface ICatRepository {
     exists(catId: string): Promise<boolean>;
     getCatByCatId(catId: string): Promise<Cat>;
