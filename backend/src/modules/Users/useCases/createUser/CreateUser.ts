@@ -8,16 +8,13 @@ import { CreateUserRequestDTO } from './CreateUserRequestDTO';
 import { CreateUserResponse } from './CreateUserResponse';
 import { UnexpectedError } from '../../../../shared/core/AppError';
 import { DuplicateUserError } from './CreateUserErrors';
-import { Injectable } from '@nestjs/common';
-import { NestUserRepository } from '../../repositories/adapters/nestUserRepository';
+import { Inject, Injectable } from '@nestjs/common';
 import { UserPassword } from '../../domain/UserPassword';
 
 @Injectable()
 export class CreateUser
     implements UseCase<CreateUserRequestDTO, Promise<CreateUserResponse>> {
-    private userRepo: IUserRepository;
-
-    constructor(userRepo: NestUserRepository) {
+    constructor(@Inject(IUserRepository) private userRepo: IUserRepository) {
         this.userRepo = userRepo;
     }
 
@@ -26,12 +23,14 @@ export class CreateUser
         const usernameOrError = UserUsername.create({
             value: request.username,
         });
-        const passwordOrError = UserPassword.create({ value: request.password });
+        const passwordOrError = UserPassword.create({
+            value: request.password,
+        });
 
         const validationResult = Result.combine([
             emailOrError,
             usernameOrError,
-            passwordOrError
+            passwordOrError,
         ]);
 
         if (validationResult.isFailure) {
@@ -61,7 +60,7 @@ export class CreateUser
             const userOrError: Result<User> = User.create({
                 email,
                 username,
-                password
+                password,
             });
 
             if (userOrError.isFailure) {
