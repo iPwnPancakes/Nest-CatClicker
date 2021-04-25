@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Either, left, Result, right } from '../../../../shared/core/Result';
 import { UserPassword } from '../../domain/UserPassword';
 import { UserUsername } from '../../domain/UserUsername';
-import { NestUserRepository } from '../../repositories/adapters/nestUserRepository';
 import { IUserRepository } from '../../repositories/ports/userRepository';
 
 export type AuthServiceResponse = Either<Result<any>, Result<void>>;
@@ -18,11 +17,7 @@ export interface IAuthService {
 
 @Injectable()
 export class AuthService implements IAuthService {
-    private userRepo: IUserRepository;
-
-    constructor(userRepo: NestUserRepository) {
-        this.userRepo = userRepo;
-    }
+    constructor(@Inject(IUserRepository) private userRepo: IUserRepository) {}
 
     async validateUserCredentials(
         username: UserUsername,

@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { left, Result, right } from '../../../../shared/core/Result';
 import { UseCase } from '../../../../shared/core/UseCase';
 import { User } from '../../domain/User';
 import { UserEmail } from '../../domain/UserEmail';
-import { NestUserRepository } from '../../repositories/adapters/nestUserRepository';
 import { IUserRepository } from '../../repositories/ports/userRepository';
 import { GetUserByEmailDTO } from './GetUserByEmailDTO';
 import { GetUserByEmailResponse } from './GetUserByEmailResponse';
@@ -11,11 +10,7 @@ import { GetUserByEmailResponse } from './GetUserByEmailResponse';
 @Injectable()
 export class GetUserByEmail
     implements UseCase<GetUserByEmailDTO, Promise<GetUserByEmailResponse>> {
-    private userRepo: IUserRepository;
-
-    constructor(userRepo: NestUserRepository) {
-        this.userRepo = userRepo;
-    }
+    constructor(@Inject(IUserRepository) private userRepo: IUserRepository) {}
 
     async execute(
         request?: GetUserByEmailDTO,
