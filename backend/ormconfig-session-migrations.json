@@ -1,0 +1,8 @@
+{
+    "type": "sqlite",
+    "database": "./database/sessions.sqlite",
+    "entities": [
+        "dist/shared/infrastructure/sessions/**/*.entity{.ts,.js}"
+    ],
+    "migrations": ["database/session_db_migrations/*{.ts,.js}"]
+}
