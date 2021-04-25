@@ -7,7 +7,9 @@ import {
     Post,
     ValidationPipe,
     Logger,
+    Response,
 } from '@nestjs/common';
+import { Response as ExpressResponse } from 'express';
 import { UserDTO } from '../../dtos/userDTO';
 import { UserMap } from '../../mappers/userMap';
 import { CreateUser } from '../../useCases/createUser/CreateUser';
@@ -17,12 +19,15 @@ import { UserWithEmailDoesNotExistError } from '../../useCases/getUserByEmail/Ge
 import { CreateUserDto } from './dtos/createUserRouteDto';
 import { GetUserByEmailRouteDto } from './dtos/getUserByEmailRouteDto';
 import { UnexpectedError } from '../../../../shared/core/AppError';
+import { LoginUserDto } from './dtos/loginUserDto';
+import { Login } from '../../useCases/login/Login';
 
 @Controller('users')
 export class UsersController {
     constructor(
         private createUserUseCase: CreateUser,
         private getUserByEmailUseCase: GetUserByEmail,
+        private loginUserUseCase: Login,
     ) {}
 
     @Post('/getByEmail')
@@ -87,7 +92,41 @@ export class UsersController {
             }
         } catch (err) {
             Logger.error(err);
-            throw new HttpException(err.message || 'An unexpected error occured', 500);
+            throw new HttpException(
+                err.message || 'An unexpected error occured',
+                500,
+            );
+        }
+    }
+
+    @Post('/login')
+    async loginUser(
+        @Body(new ValidationPipe()) loginUserDto: LoginUserDto,
+        @Response() res: ExpressResponse,
+    ): Promise<void> {
+        try {
+            const result = await this.loginUserUseCase.execute(loginUserDto);
+
+            if (result.isLeft()) {
+                const error = result.value;
+
+                switch (error.constructor) {
+                    default: {
+                        throw new HttpException(
+                            (error as UnexpectedError).errorValue(),
+                            500,
+                        );
+                    }
+                }
+            } else {
+                res.redirect('/loggedIn');
+            }
+        } catch (err) {
+            Logger.error(err);
+            throw new HttpException(
+                err.message || 'An unexpected error occured',
+                500,
+            );
         }
     }
 }
