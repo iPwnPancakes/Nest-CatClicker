@@ -11,10 +11,13 @@ export class SqliteSessionService implements ISessionService {
     async createUserSession(user: User): Promise<void> {
         const sql = `INSERT INTO sessions (id, user_id, expires_at) VALUES ($id, $user_id, $expires_at)`;
 
+        const now = new Date();
+        now.setDate(now.getDate() + 7);
+
         await this.db.run(sql, {
             $id: uuid(),
             $user_id: user.userId.id.toString(),
-            $expires_at: new Date().toUTCString(),
+            $expires_at: now.toUTCString(),
         });
     }
 
