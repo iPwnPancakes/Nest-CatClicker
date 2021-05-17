@@ -1,27 +1,29 @@
 import { User } from '~/models/User';
+import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators';
+import { UsersModule } from '~/libs/CatClickerAPI/Users';
 
-interface UserStoreState {
-    user: User | null;
+@Module({
+    name: 'UserModule',
+    stateFactory: true,
+    namespaced: true,
+})
+export default class UserModule extends VuexModule {
+    user?: User;
+
+    @Mutation
+    setUser(user: User) {
+        this.user = user;
+    }
+
+    @Mutation
+    unsetUser() {
+        this.user = undefined;
+    }
+
+    @Action
+    async fetchUserFromAccessToken(token: string) {
+        const response = await UsersModule.GetUserBySessionID({ sessionID: token });
+
+        this.user = new User({ username: response.username ?? '' });
+    }
 }
-
-interface UserStoreStatePayload<T> {
-    action: string;
-    value: T;
-}
-
-export const state = () => ({
-    user: null,
-});
-
-export const mutations = {
-    setUser(state: UserStoreState, payload: UserStoreStatePayload<User>) {
-        state.user = payload.value;
-    },
-    unsetUser(state: UserStoreState) {
-        state.user = null;
-    },
-};
-
-export const getters = {
-    isLoggedIn: (state: UserStoreState) => Boolean(state.user),
-};

@@ -5,7 +5,7 @@ interface UserProps {
 export class User {
     private props;
 
-    private constructor(props: UserProps) {
+    public constructor(props: UserProps) {
         this.props = props;
     }
 
