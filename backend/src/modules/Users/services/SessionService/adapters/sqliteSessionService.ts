@@ -3,10 +3,28 @@ import { User } from '../../../domain/User';
 import { ISessionService } from '../ports/sessionService';
 import { Database } from 'sqlite';
 import { v4 as uuid } from 'uuid';
+import { Session } from '../../../../../shared/infrastructure/sessions/typeorm/models/Session.entity';
 
 @Injectable()
 export class SqliteSessionService implements ISessionService {
     constructor(@Inject('SQLITE_CONNECTION') private db: Database) {}
+
+    async getSessionBySessionID(sessionId: string): Promise<Session> {
+        const sql = `SELECT * FROM sessions WHERE id = ?`;
+
+        const result = await this.db.get(sql, [sessionId]);
+
+        if (!result) {
+            throw new Error('Session with that ID does not exist');
+        }
+
+        const session = new Session();
+        session.id = result.id;
+        session.user_id = result.user_id;
+        session.expires_at = result.expires_at;
+
+        return session;
+    }
 
     async createUserSession(user: User): Promise<void> {
         const sql = `INSERT INTO sessions (id, user_id, expires_at) VALUES ($id, $user_id, $expires_at)`;
@@ -39,7 +57,7 @@ export class SqliteSessionService implements ISessionService {
         return true;
     }
 
-    async getSessionIdByUser(user: User): Promise<string> {
+    async getSessionByUser(user: User): Promise<Session> {
         const sql = `SELECT * FROM sessions WHERE user_id = $user_id`;
 
         const result = await this.db.get(sql, {
@@ -50,7 +68,7 @@ export class SqliteSessionService implements ISessionService {
             throw new Error('User does not have a session');
         }
 
-        return result.id;
+        return result;
     }
 
     async checkIfSessionExpired(sessionId: string): Promise<boolean> {
