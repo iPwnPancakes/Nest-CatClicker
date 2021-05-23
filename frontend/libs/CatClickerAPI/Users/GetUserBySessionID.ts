@@ -9,7 +9,6 @@ interface GetUserBySessionIdResponseDTO {
 }
 
 export async function GetUserBySessionID(dto: GetUserBySessionIdDTO): Promise<GetUserBySessionIdResponseDTO> {
-    console.log(process.env.CAT_CLICKER_API_URL, 'url');
     const response = await axios.get(process.env.CAT_CLICKER_API_URL + '/getUserFromAccessToken');
 
     if (response.status !== 200) {

@@ -13,26 +13,35 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { CButton, CInput } from '@chakra-ui/vue';
+import UserModule from '~/store/userStore';
+import { getModule } from 'vuex-module-decorators';
 
-export default {
+export default Vue.extend({
     components: {
         CButton,
         CInput,
     },
     data() {
         return {
-            username: null,
-            password: null,
+            username: '',
+            password: '',
         };
     },
     methods: {
         submitLoginForm() {
-            console.log('TODO');
+            if (!this.username || !this.password) {
+                return;
+            }
+
+            const usersModule: UserModule = getModule(UserModule, this.$store);
+
+            usersModule.login({ username: this.username, password: this.password });
         },
     },
-};
+});
 </script>
 
 <style></style>

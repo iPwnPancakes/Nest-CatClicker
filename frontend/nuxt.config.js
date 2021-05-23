@@ -58,5 +58,8 @@ export default {
   },
   router: {
     middleware: ['authRedirect']
+  },
+  env: {
+    CAT_CLICKER_API_URL: 'http://localhost:8000'
   }
 }

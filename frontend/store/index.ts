@@ -23,6 +23,10 @@ export const actions = {
     },
 };
 
+export const modules = {
+    UserModule,
+};
+
 class Cookie {
     private properties: string[] = [];
 

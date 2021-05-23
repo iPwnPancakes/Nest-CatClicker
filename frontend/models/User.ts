@@ -6,6 +6,10 @@ export class User {
     private props;
 
     public constructor(props: UserProps) {
+        if (!props.username) {
+            throw new Error('Username is required');
+        }
+
         this.props = props;
     }
 
